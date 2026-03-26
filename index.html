@@ -1,24 +1,560 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Classroom Tools</title>
-    <style>
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            max-width: 600px;
-            margin: 50px auto;
-            padding: 20px;
-            text-align: center;
-        }
-        h1 { color: #2c3e50; }
-        p { color: #7f8c8d; }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Classroom Tools — Interactive Apps for Ontario Teachers</title>
+  <meta name="description" content="Curriculum-mapped interactive classroom apps for Ontario Grade 7–9 teachers. Stop building from scratch. Get ready-to-use tools your students actually engage with." />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --blue:    #2563eb;
+      --blue-dk: #1d4ed8;
+      --green:   #16a34a;
+      --slate:   #1e293b;
+      --muted:   #64748b;
+      --border:  #e2e8f0;
+      --bg:      #f8fafc;
+      --white:   #ffffff;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: var(--white);
+      color: var(--slate);
+      line-height: 1.6;
+    }
+
+    /* ── NAV ── */
+    nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 2rem;
+      border-bottom: 1px solid var(--border);
+      background: var(--white);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .nav-logo {
+      font-weight: 700;
+      font-size: 1.1rem;
+      color: var(--slate);
+      text-decoration: none;
+    }
+    .nav-logo span { color: var(--blue); }
+    .nav-cta {
+      background: var(--blue);
+      color: var(--white);
+      padding: .5rem 1.25rem;
+      border-radius: 6px;
+      text-decoration: none;
+      font-size: .9rem;
+      font-weight: 600;
+      transition: background .2s;
+    }
+    .nav-cta:hover { background: var(--blue-dk); }
+
+    /* ── SECTIONS ── */
+    section { padding: 5rem 1.5rem; }
+    .container { max-width: 860px; margin: 0 auto; }
+    .center { text-align: center; }
+
+    /* ── HERO ── */
+    .hero {
+      background: linear-gradient(135deg, #eff6ff 0%, #f0fdf4 100%);
+      padding: 6rem 1.5rem 5rem;
+    }
+    .badge {
+      display: inline-block;
+      background: #dbeafe;
+      color: var(--blue);
+      font-size: .78rem;
+      font-weight: 700;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      padding: .3rem .75rem;
+      border-radius: 999px;
+      margin-bottom: 1.25rem;
+    }
+    .hero h1 {
+      font-size: clamp(2rem, 5vw, 3rem);
+      font-weight: 800;
+      line-height: 1.2;
+      margin-bottom: 1.25rem;
+      color: var(--slate);
+    }
+    .hero h1 em { color: var(--blue); font-style: normal; }
+    .hero p {
+      font-size: 1.15rem;
+      color: var(--muted);
+      max-width: 600px;
+      margin: 0 auto 2.5rem;
+    }
+
+    /* email form */
+    .form-row {
+      display: flex;
+      gap: .75rem;
+      justify-content: center;
+      flex-wrap: wrap;
+      max-width: 480px;
+      margin: 0 auto;
+    }
+    .form-row input[type="email"] {
+      flex: 1 1 220px;
+      padding: .75rem 1rem;
+      border: 1.5px solid var(--border);
+      border-radius: 8px;
+      font-size: 1rem;
+      outline: none;
+      transition: border-color .2s;
+    }
+    .form-row input[type="email"]:focus { border-color: var(--blue); }
+    .form-row button {
+      background: var(--blue);
+      color: var(--white);
+      border: none;
+      padding: .75rem 1.5rem;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background .2s;
+      white-space: nowrap;
+    }
+    .form-row button:hover { background: var(--blue-dk); }
+    .form-note {
+      font-size: .82rem;
+      color: var(--muted);
+      margin-top: .75rem;
+    }
+
+    /* ── PROBLEM ── */
+    .problem { background: var(--white); }
+    .problem h2 {
+      font-size: clamp(1.5rem, 3.5vw, 2.1rem);
+      font-weight: 800;
+      margin-bottom: 1rem;
+    }
+    .problem p {
+      font-size: 1.05rem;
+      color: var(--muted);
+      max-width: 640px;
+      margin: 0 auto 1rem;
+    }
+    .stat-row {
+      display: flex;
+      justify-content: center;
+      gap: 2rem;
+      flex-wrap: wrap;
+      margin-top: 3rem;
+    }
+    .stat {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.5rem 2rem;
+      text-align: center;
+      min-width: 160px;
+    }
+    .stat-num {
+      font-size: 2.2rem;
+      font-weight: 800;
+      color: var(--blue);
+      line-height: 1;
+    }
+    .stat-label {
+      font-size: .85rem;
+      color: var(--muted);
+      margin-top: .4rem;
+    }
+
+    /* ── TOOLS DEMO ── */
+    .demos { background: var(--bg); }
+    .demos h2 {
+      font-size: clamp(1.5rem, 3.5vw, 2.1rem);
+      font-weight: 800;
+      margin-bottom: .5rem;
+    }
+    .demos .sub {
+      font-size: 1.05rem;
+      color: var(--muted);
+      margin-bottom: 3rem;
+    }
+    .tool-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1.5rem;
+    }
+    .tool-card {
+      background: var(--white);
+      border: 1.5px solid var(--border);
+      border-radius: 14px;
+      padding: 1.75rem;
+      transition: box-shadow .2s, border-color .2s;
+    }
+    .tool-card:hover {
+      box-shadow: 0 4px 24px rgba(37,99,235,.1);
+      border-color: var(--blue);
+    }
+    .tool-icon { font-size: 2rem; margin-bottom: .75rem; }
+    .tool-card h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: .4rem; }
+    .tool-card p { font-size: .9rem; color: var(--muted); margin-bottom: 1.25rem; }
+    .tool-tag {
+      display: inline-block;
+      background: #f0fdf4;
+      color: var(--green);
+      font-size: .75rem;
+      font-weight: 700;
+      padding: .25rem .6rem;
+      border-radius: 999px;
+      margin-bottom: 1rem;
+    }
+    .tool-link {
+      display: inline-block;
+      background: var(--blue);
+      color: var(--white);
+      text-decoration: none;
+      padding: .6rem 1.25rem;
+      border-radius: 8px;
+      font-size: .9rem;
+      font-weight: 600;
+      transition: background .2s;
+    }
+    .tool-link:hover { background: var(--blue-dk); }
+
+    /* ── FEATURES ── */
+    .features { background: var(--white); }
+    .features h2 {
+      font-size: clamp(1.5rem, 3.5vw, 2.1rem);
+      font-weight: 800;
+      margin-bottom: .5rem;
+    }
+    .features .sub {
+      font-size: 1.05rem;
+      color: var(--muted);
+      margin-bottom: 3rem;
+    }
+    .feat-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1.25rem;
+    }
+    .feat {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.5rem;
+    }
+    .feat-icon { font-size: 1.6rem; margin-bottom: .5rem; }
+    .feat h4 { font-size: 1rem; font-weight: 700; margin-bottom: .3rem; }
+    .feat p { font-size: .875rem; color: var(--muted); }
+
+    /* ── PRICING ── */
+    .pricing { background: var(--bg); }
+    .pricing h2 {
+      font-size: clamp(1.5rem, 3.5vw, 2.1rem);
+      font-weight: 800;
+      margin-bottom: .5rem;
+    }
+    .pricing .sub {
+      font-size: 1.05rem;
+      color: var(--muted);
+      margin-bottom: 3rem;
+    }
+    .price-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1.25rem;
+      max-width: 780px;
+      margin: 0 auto;
+    }
+    .price-card {
+      background: var(--white);
+      border: 1.5px solid var(--border);
+      border-radius: 14px;
+      padding: 1.75rem;
+      text-align: center;
+    }
+    .price-card.featured {
+      border-color: var(--blue);
+      box-shadow: 0 0 0 3px rgba(37,99,235,.1);
+    }
+    .price-card .plan { font-size: .8rem; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); margin-bottom: .5rem; }
+    .price-card .amount { font-size: 2rem; font-weight: 800; color: var(--slate); }
+    .price-card .amount span { font-size: 1rem; font-weight: 400; color: var(--muted); }
+    .price-card .desc { font-size: .875rem; color: var(--muted); margin: .75rem 0 1.5rem; }
+    .price-card ul { list-style: none; text-align: left; font-size: .875rem; color: var(--slate); }
+    .price-card ul li { padding: .3rem 0; }
+    .price-card ul li::before { content: "✓ "; color: var(--green); font-weight: 700; }
+    .coming-soon-badge {
+      display: inline-block;
+      background: #fef9c3;
+      color: #854d0e;
+      font-size: .75rem;
+      font-weight: 700;
+      padding: .2rem .6rem;
+      border-radius: 999px;
+      margin-top: .75rem;
+    }
+
+    /* ── BETA CTA ── */
+    .beta {
+      background: linear-gradient(135deg, #1e40af 0%, #1d4ed8 100%);
+      color: var(--white);
+      text-align: center;
+    }
+    .beta h2 {
+      font-size: clamp(1.5rem, 3.5vw, 2.1rem);
+      font-weight: 800;
+      margin-bottom: .75rem;
+    }
+    .beta p {
+      font-size: 1.05rem;
+      opacity: .85;
+      max-width: 540px;
+      margin: 0 auto 2rem;
+    }
+    .beta .form-row input[type="email"] {
+      border-color: rgba(255,255,255,.4);
+      background: rgba(255,255,255,.1);
+      color: var(--white);
+    }
+    .beta .form-row input[type="email"]::placeholder { color: rgba(255,255,255,.6); }
+    .beta .form-row input[type="email"]:focus { border-color: var(--white); }
+    .beta .form-row button {
+      background: var(--white);
+      color: var(--blue);
+    }
+    .beta .form-row button:hover { background: #e0e7ff; }
+    .beta .form-note { color: rgba(255,255,255,.65); }
+
+    /* ── FOOTER ── */
+    footer {
+      background: var(--slate);
+      color: rgba(255,255,255,.55);
+      text-align: center;
+      padding: 2rem 1.5rem;
+      font-size: .85rem;
+    }
+    footer strong { color: rgba(255,255,255,.85); }
+
+    /* ── SUCCESS MESSAGE ── */
+    .success-msg {
+      display: none;
+      background: #f0fdf4;
+      border: 1px solid #bbf7d0;
+      color: var(--green);
+      padding: .75rem 1.25rem;
+      border-radius: 8px;
+      font-weight: 600;
+      margin-top: .75rem;
+    }
+  </style>
 </head>
 <body>
-    <h1>Classroom Tools</h1>
-    <p>Interactive single-page apps for the classroom.</p>
-    <p><em>Tools will appear here as they're created.</em></p>
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="nav-logo">Classroom<span>Tools</span></a>
+  <a href="#beta" class="nav-cta">Get early access</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero center">
+  <div class="container">
+    <div class="badge">Ontario Curriculum · Grades 7–9 · Beta</div>
+    <h1>Interactive classroom tools<br><em>built for Ontario teachers.</em></h1>
+    <p>Stop spending your nights building lessons from scratch. Get ready-to-use, curriculum-mapped apps your students actually engage with.</p>
+    <form class="form-row" id="hero-form" onsubmit="handleSubmit(event,'hero-success')">
+      <input type="email" placeholder="Enter your school email" required />
+      <button type="submit">Get free early access →</button>
+    </form>
+    <div class="success-msg" id="hero-success">✓ You're on the list! We'll be in touch soon.</div>
+    <p class="form-note">Free to join. No credit card required. Canadian teachers only (for now).</p>
+  </div>
+</section>
+
+<!-- PROBLEM -->
+<section class="problem center">
+  <div class="container">
+    <h2>You're spending your nights building lessons.<br>There's a better way.</h2>
+    <p>Existing tools give you worksheets and slide templates — but nothing that brings concepts to life in front of a class. You shouldn't have to build a shadow simulator from scratch just to teach Earth science.</p>
+    <p>We build the interactive tools. You teach.</p>
+    <div class="stat-row">
+      <div class="stat">
+        <div class="stat-num">10–20</div>
+        <div class="stat-label">hours/week on prep<br>outside school hours</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">107K</div>
+        <div class="stat-label">K–12 teachers<br>in Ontario alone</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">0</div>
+        <div class="stat-label">tools built for<br>Ontario interactive apps</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- DEMOS -->
+<section class="demos center">
+  <div class="container">
+    <h2>See it in action.</h2>
+    <p class="sub">Two tools built in one evening. Ready for class Monday morning.</p>
+    <div class="tool-grid">
+      <div class="tool-card">
+        <div class="tool-icon">🌞</div>
+        <div class="tool-tag">Science · Grade 8 · Earth & Space</div>
+        <h3>CN Tower Shadow Simulator</h3>
+        <p>Interactive 3D demo showing how shadows change across times of day and seasons. Students manipulate the sun position and observe in real time.</p>
+        <a href="./cn-tower-shadow/" class="tool-link" target="_blank">Try the demo →</a>
+      </div>
+      <div class="tool-card">
+        <div class="tool-icon">📐</div>
+        <div class="tool-tag">Math · Grade 8 · Spatial Sense</div>
+        <h3>Math Translations Tool</h3>
+        <p>Tutorial-style interactive that walks students through geometric translations with a built-in quiz to test understanding — no marking required.</p>
+        <a href="./math-translations/" class="tool-link" target="_blank">Try the demo →</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section class="features center">
+  <div class="container">
+    <h2>What we're building.</h2>
+    <p class="sub">A full catalog of interactive single-page apps, mapped to Ontario curriculum expectations.</p>
+    <div class="feat-grid">
+      <div class="feat">
+        <div class="feat-icon">🎮</div>
+        <h4>Visual Demos</h4>
+        <p>3D simulations and animations tied to specific Ontario expectations. Students explore, not just watch.</p>
+      </div>
+      <div class="feat">
+        <div class="feat-icon">📖</div>
+        <h4>Tutorial Tools</h4>
+        <p>Step-by-step walkthroughs students can explore at their own pace. Guided or free-form.</p>
+      </div>
+      <div class="feat">
+        <div class="feat-icon">✅</div>
+        <h4>Knowledge Checks</h4>
+        <p>Built-in quizzes with instant feedback. Students know where they stand; you don't mark a thing.</p>
+      </div>
+      <div class="feat">
+        <div class="feat-icon">🎨</div>
+        <h4>Customizable</h4>
+        <p>Want a variation for your specific unit? Tell us what you need — we generate it for you.</p>
+      </div>
+      <div class="feat">
+        <div class="feat-icon">🇨🇦</div>
+        <h4>Ontario-Mapped</h4>
+        <p>Every tool aligns to a specific Ontario curriculum expectation. Find exactly what you need, fast.</p>
+      </div>
+      <div class="feat">
+        <div class="feat-icon">📱</div>
+        <h4>Works Everywhere</h4>
+        <p>Browser-based. Works on Chromebooks, tablets, phones, and projectors. No installs required.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section class="pricing center">
+  <div class="container">
+    <h2>Free to start. Affordable to grow.</h2>
+    <p class="sub">Pricing is being shaped by real teacher feedback. Join the beta to have a say.</p>
+    <div class="price-grid">
+      <div class="price-card">
+        <div class="plan">Free</div>
+        <div class="amount">$0<span>/mo</span></div>
+        <div class="desc">Access a rotating selection of tools every month.</div>
+        <ul>
+          <li>3–5 tools per month</li>
+          <li>Ontario curriculum tags</li>
+          <li>No account required</li>
+        </ul>
+      </div>
+      <div class="price-card featured">
+        <div class="plan">Subscription</div>
+        <div class="amount">TBD<span></span></div>
+        <div class="desc">Full catalog access, new tools added weekly.</div>
+        <ul>
+          <li>Full catalog (all grades/subjects)</li>
+          <li>New tools weekly</li>
+          <li>Early access to new features</li>
+          <li>Priority support</li>
+        </ul>
+        <div class="coming-soon-badge">Early bird pricing for beta testers</div>
+      </div>
+      <div class="price-card">
+        <div class="plan">Custom</div>
+        <div class="amount" style="font-size:1.4rem">Per request</div>
+        <div class="desc">Need something specific to your unit? We'll build it.</div>
+        <ul>
+          <li>Tailored to your lesson</li>
+          <li>Your input, AI-generated</li>
+          <li>Delivered within days</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- BETA CTA -->
+<section class="beta" id="beta">
+  <div class="container">
+    <h2>Be first. Shape the product.</h2>
+    <p>We're onboarding a small group of Ontario teachers to test tools in real classrooms before we launch publicly. Beta testers get free access and a direct say in what gets built next.</p>
+    <form class="form-row" id="beta-form" onsubmit="handleSubmit(event,'beta-success')">
+      <input type="email" placeholder="Enter your school email" required />
+      <button type="submit">Join the beta →</button>
+    </form>
+    <div class="success-msg" id="beta-success">✓ You're on the list! We'll reach out shortly.</div>
+    <p class="form-note">No spam. No pressure. Just early access and honest conversation.</p>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <strong>ClassroomTools</strong> — Built by a Canadian team. Aligned to Ontario Ministry of Education curriculum guidelines.<br />
+  <span style="margin-top:.5rem;display:block">© 2026 · <a href="mailto:hello@classroomtools.ca" style="color:rgba(255,255,255,.55)">hello@classroomtools.ca</a></span>
+</footer>
+
+<script>
+  // Simple form handler — logs to console + shows success message
+  // Replace the fetch URL with your Formspree endpoint once set up
+  function handleSubmit(e, successId) {
+    e.preventDefault();
+    const form = e.target;
+    const email = form.querySelector('input[type="email"]').value;
+
+    // Optional: POST to Formspree
+    // fetch('https://formspree.io/f/YOUR_FORM_ID', {
+    //   method: 'POST',
+    //   headers: { 'Content-Type': 'application/json' },
+    //   body: JSON.stringify({ email })
+    // });
+
+    console.log('Beta signup:', email);
+    form.style.display = 'none';
+    document.getElementById(successId).style.display = 'block';
+  }
+
+  // Smooth scroll for anchor links
+  document.querySelectorAll('a[href^="#"]').forEach(a => {
+    a.addEventListener('click', e => {
+      const target = document.querySelector(a.getAttribute('href'));
+      if (target) { e.preventDefault(); target.scrollIntoView({ behavior: 'smooth' }); }
+    });
+  });
+</script>
+
 </body>
 </html>
