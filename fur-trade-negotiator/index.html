@@ -1,226 +1,285 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Fur Trade Negotiator - ClassroomTools</title>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Fur Trade Negotiator &mdash; ClassroomTools</title>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-:root{--brn:#6B3A1F;--brn2:#8B4513;--gld:#B8860B;--gld2:#DAA520;--drk:#2C1810;--lt:#FDF6EC;--border-acc:#DEB887;--heading:#6B3A1F;--bg-light:#FAEBD7;--exp-bg:#F5DEB3;--mut:#777;--frst:#2E7D32}
-body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--lt);color:var(--drk);line-height:1.6}
-.topbar{display:flex;align-items:center;gap:1rem;padding:.75rem 1.5rem;background:var(--brn);color:#FFE4B5;font-size:.9rem;flex-wrap:wrap}
-.topbar a{color:#FFD9A0;text-decoration:none;font-weight:600}.topbar a:hover{text-decoration:underline}
-.badge{margin-left:auto;background:var(--frst);color:#fff;padding:.3rem .8rem;border-radius:999px;font-size:.75rem;font-weight:700;white-space:nowrap}
-.hero{background:linear-gradient(135deg,#2C1810,#6B3A1F,#8B4513);color:#FFE4B5;padding:2.5rem 1.5rem;text-align:center}
-.hero h1{font-size:clamp(1.6rem,4vw,2.4rem);font-weight:800;margin-bottom:.5rem}
-.hero p{opacity:.9;max-width:600px;margin:0 auto}
-.perspective-sec{padding:2rem 1.5rem;max-width:800px;margin:0 auto}
-.persp-title{text-align:center;font-size:1.05rem;font-weight:700;color:var(--heading);margin-bottom:1.25rem}
-.persp-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:2rem}
-@media(max-width:500px){.persp-grid{grid-template-columns:1fr}}
-.persp-btn{background:#fff;border:2px solid var(--border-acc);border-radius:14px;padding:1.4rem;cursor:pointer;text-align:center;transition:all .2s}
-.persp-btn:hover{border-color:var(--brn2);box-shadow:0 4px 16px rgba(107,58,31,.2);transform:translateY(-2px)}
-.persp-btn.selected{border-color:var(--brn);box-shadow:0 0 0 3px rgba(107,58,31,.2)}
+:root{--brown:#5D3A1A;--brown2:#8B5E3C;--gold:#C9A84C;--gold2:#F0C869;--cream:#FDF6E3;--dark:#2C1A0E;--text:#3A1F0D;--muted:#7B5940;--border:#D4B483;--green2:#2D6A2D;--white:#fff}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--cream);color:var(--text);line-height:1.6}
+nav{display:flex;justify-content:space-between;align-items:center;padding:.75rem 1.5rem;background:var(--dark);color:var(--cream);flex-wrap:wrap;gap:.5rem}
+.back{color:var(--gold2);text-decoration:none;font-size:.9rem}.back:hover{color:#fff}
+.badge{background:var(--brown2);color:#fff;padding:.25rem .75rem;border-radius:999px;font-size:.75rem;font-weight:700}
+main{max-width:800px;margin:0 auto;padding:2rem 1rem}
+h1{font-size:clamp(1.4rem,4vw,2rem);font-weight:800;color:var(--dark);margin-bottom:.5rem}
+.intro{color:var(--muted);margin-bottom:1.5rem}
+.persp-section{background:linear-gradient(135deg,#3a1f0d,#5d3a1a);border-radius:14px;padding:2rem;margin-bottom:1.5rem;text-align:center}
+.persp-section h2{color:var(--gold2);font-size:1.2rem;margin-bottom:.75rem}
+.persp-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-top:.5rem}
+@media(max-width:480px){.persp-grid{grid-template-columns:1fr}}
+.persp-btn{background:rgba(255,255,255,.08);border:2px solid var(--gold);border-radius:12px;padding:1.5rem 1rem;cursor:pointer;color:var(--cream);transition:all .25s;text-align:center}
+.persp-btn:hover{background:rgba(255,255,255,.18);transform:translateY(-2px)}
+.persp-btn.active{background:var(--gold);color:var(--dark)}
 .persp-icon{font-size:2.5rem;margin-bottom:.5rem}
-.persp-label{font-size:1rem;font-weight:800;color:var(--heading)}
-.persp-desc{font-size:.82rem;color:var(--mut);margin-top:.3rem}
-#game-area{display:none}
-.round-block{background:#fff;border:1.5px solid var(--border-acc);border-radius:14px;padding:1.5rem;margin-bottom:1.5rem;display:none}
-.round-block.active{display:block;animation:fadeIn .4s}
-@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
-.rnd-num{font-size:.72rem;font-weight:700;color:var(--gld2);text-transform:uppercase;letter-spacing:.06em;margin-bottom:.3rem}
-.rnd-title{font-size:1.05rem;font-weight:800;color:var(--heading);margin-bottom:.75rem}
-.rnd-sit{font-size:.92rem;line-height:1.7;background:var(--bg-light);padding:1rem;border-radius:8px;margin-bottom:1.1rem;border-left:4px solid var(--gld2)}
-.opts-grid{display:grid;gap:.55rem;margin-bottom:.5rem}
-.opt-btn{background:var(--lt);border:1.5px solid var(--border-acc);border-radius:9px;padding:.75rem 1rem;font-size:.88rem;cursor:pointer;text-align:left;transition:all .2s;color:var(--drk);line-height:1.5}
-.opt-btn:hover:not(:disabled){background:var(--bg-light);border-color:var(--brn2)}
-.opt-btn:disabled{cursor:default}
-.opt-btn.chosen-good{background:#d1fae5;border-color:#10b981;color:#065f46}
-.opt-btn.chosen-ok{background:#FFF9C4;border-color:#F9A825;color:#5D4037}
-.opt-btn.chosen-poor{background:#fee2e2;border-color:#ef4444;color:#991b1b}
-.outcome-box{display:none;padding:1rem;border-radius:10px;font-size:.9rem;line-height:1.65;margin-top:.5rem;animation:fadeIn .3s}
-.outcome-box.show{display:block}
-.outcome-box.good{background:#d1fae5;border:1.5px solid #10b981;color:#065f46}
-.outcome-box.ok{background:#FFF9C4;border:1.5px solid #F9A825;color:#5D4037}
-.outcome-box.poor{background:#fee2e2;border:1.5px solid #ef4444;color:#991b1b}
-.next-btn{background:var(--brn);color:#FFE4B5;border:none;padding:.6rem 1.4rem;border-radius:8px;font-size:.88rem;font-weight:700;cursor:pointer;margin-top:.75rem;transition:background .2s}
-.next-btn:hover{background:var(--brn2)}
-.result-screen{display:none;background:#fff;border:2px solid var(--border-acc);border-radius:16px;padding:2rem;text-align:center;margin-top:1.5rem}
-.result-screen h2{font-size:1.35rem;font-weight:800;color:var(--heading);margin-bottom:.5rem}
-.result-score{font-size:3rem;font-weight:800;color:var(--gld2);margin:.5rem 0}
-.result-verdict{font-size:.97rem;line-height:1.7;color:var(--drk);max-width:540px;margin:.5rem auto 1.25rem}
-.hist-note{background:var(--bg-light);border-left:4px solid var(--gld2);padding:.9rem 1.1rem;border-radius:0 10px 10px 0;font-size:.87rem;text-align:left;margin-top:1rem}
-.hist-note strong{color:var(--heading)}
-.reset-btn{background:var(--brn2);color:#fff;border:none;padding:.7rem 1.6rem;border-radius:8px;font-size:.92rem;font-weight:700;cursor:pointer;margin-top:1rem;transition:background .2s}
-.reset-btn:hover{background:var(--brn)}
-.curric-sec{background:#fff;padding:2rem 1.5rem;border-top:3px solid var(--border-acc)}.curric-wrap{max-width:760px;margin:0 auto}
-.ctog{width:100%;background:none;border:2px solid var(--border-acc);border-radius:10px;padding:1rem 1.25rem;display:flex;justify-content:space-between;align-items:center;cursor:pointer;font-size:.95rem;font-weight:700;color:var(--heading);transition:background .2s;text-align:left}
-.ctog:hover{background:var(--bg-light)}.cico{transition:transform .3s}.cico.open{transform:rotate(180deg)}
-.cbody{display:none;border:2px solid var(--border-acc);border-top:none;border-radius:0 0 10px 10px;padding:1.5rem;background:var(--bg-light)}
-.cbody.open{display:block}
-.cgrid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem}
-@media(max-width:500px){.cgrid{grid-template-columns:1fr}}
-.ci label{font-size:.71rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--mut);display:block;margin-bottom:.2rem}
-.ci span{font-size:.92rem;font-weight:600}
-.cexp{background:var(--exp-bg);border-left:4px solid var(--border-acc);padding:.8rem 1rem;border-radius:0 8px 8px 0;margin-top:.8rem}
-.cexp .ecode{font-weight:800;color:var(--heading);font-size:.87rem}.cexp .etxt{font-size:.87rem;margin-top:.2rem}
-.chow{margin-top:.9rem;font-size:.87rem;color:#555;line-height:1.65;padding:.7rem;background:rgba(0,0,0,.03);border-radius:8px}
-.chow strong{color:#222}
-footer{background:var(--brn);color:rgba(255,228,181,.5);text-align:center;padding:1.2rem;font-size:.81rem}
-footer strong{color:#FFE4B5}
-</style></head><body>
-<div class="topbar"><a href="../">&larr; Back to Classroom Tools</a>
-<span class="badge">&#129332; Grade 7 &middot; History &middot; New France &amp; the Fur Trade 1713&ndash;1850</span></div>
-<div class="hero"><h1>&#129332; Fur Trade Negotiator</h1>
-<p>Step into the world of New France in the 1700s. Choose your perspective and make three rounds of trade decisions &mdash; then discover how your choices compare to history.</p></div>
-<section class="perspective-sec">
-<p class="persp-title">Choose your perspective to begin:</p>
-<div class="persp-grid">
-<div class="persp-btn" id="btn-indig" onclick="choosePerspective('indig')">
-<div class="persp-icon">&#129334;</div>
-<div class="persp-label">Indigenous Trader</div>
-<div class="persp-desc">You are an Algonquin trading leader navigating European contact, protecting your community and traditional territory.</div>
-</div>
-<div class="persp-btn" id="btn-french" onclick="choosePerspective('french')">
-<div class="persp-icon">&#9875;&#65039;</div>
-<div class="persp-label">French/English Fur Trader</div>
-<div class="persp-desc">You are a coureur de bois trying to build a profitable fur trade network in New France under pressure from your company.</div>
-</div>
-</div>
-<div id="game-area">
-<div id="rounds-indig" style="display:none"><div class="round-block" id="round-indig-0">
-<div class="rnd-num">Round 1 of 3</div>
-<div class="rnd-title">Round 1: The First Meeting</div>
-<div class="rnd-sit">It is 1715 at a trading post near the St. Lawrence River. French traders arrive with metal tools, blankets, and muskets. They want beaver pelts. You are an Algonquin trading leader. What do you offer?</div>
-<div class="opts-grid"><button class="opt-btn" onclick="pickOpt(0,0,'indig')">Offer only a small number of pelts to test their intentions. Maintain strategic balance.</button><button class="opt-btn" onclick="pickOpt(0,1,'indig')">Trade as many pelts as you can for as many muskets as possible to protect your people.</button><button class="opt-btn" onclick="pickOpt(0,2,'indig')">Refuse to trade until the French recognize your territorial authority over these lands.</button></div>
-<div class="outcome-box" id="outcome-indig-0"></div>
-</div><div class="round-block" id="round-indig-1">
-<div class="rnd-num">Round 2 of 3</div>
-<div class="rnd-title">Round 2: The Dependency Trap</div>
-<div class="rnd-sit">Three years later, your community has become accustomed to European metal tools and blankets. The French now demand exclusivity — you must trade only with them. A British trader has arrived offering better prices. What do you do?</div>
-<div class="opts-grid"><button class="opt-btn" onclick="pickOpt(1,0,'indig')">Accept French exclusivity. Stability and established relationships matter more than better prices.</button><button class="opt-btn" onclick="pickOpt(1,1,'indig')">Negotiate with both traders, creating competition that raises your bargaining power.</button><button class="opt-btn" onclick="pickOpt(1,2,'indig')">Reject both traders and rely entirely on traditional methods.</button></div>
-<div class="outcome-box" id="outcome-indig-1"></div>
-</div><div class="round-block" id="round-indig-2">
-<div class="rnd-num">Round 3 of 3</div>
-<div class="rnd-title">Round 3: The Long-Term Consequence</div>
-<div class="rnd-sit">It is 1750. The beaver population has been dramatically reduced due to over-trapping across the region. Disease has struck your community. The French are pushing your people further from your traditional territory. You must make a strategic decision.</div>
-<div class="opts-grid"><button class="opt-btn" onclick="pickOpt(2,0,'indig')">Form an alliance with other First Nations to collectively renegotiate territory and trade terms.</button><button class="opt-btn" onclick="pickOpt(2,1,'indig')">Accept French offers of 'protection' and closer settlement near their forts.</button><button class="opt-btn" onclick="pickOpt(2,2,'indig')">Relocate further west to new beaver territory, maintaining independence but losing traditional land.</button></div>
-<div class="outcome-box" id="outcome-indig-2"></div>
-</div></div>
-<div id="rounds-french" style="display:none"><div class="round-block" id="round-french-0">
-<div class="rnd-num">Round 1 of 3</div>
-<div class="rnd-title">Round 1: Establishing Trade</div>
-<div class="rnd-sit">It is 1715. You are a French coureur de bois (fur trader) trying to establish relations with the Algonquin people. Your company needs beaver pelts to supply European hat markets. What is your approach?</div>
-<div class="opts-grid"><button class="opt-btn" onclick="pickOpt(0,0,'french')">Offer generous terms and gifts to build genuine trust and a long-term partnership.</button><button class="opt-btn" onclick="pickOpt(0,1,'french')">Offer the minimum necessary — you need to maximize profit on every trade.</button><button class="opt-btn" onclick="pickOpt(0,2,'french')">Claim the territory for New France and impose French trading regulations.</button></div>
-<div class="outcome-box" id="outcome-french-0"></div>
-</div><div class="round-block" id="round-french-1">
-<div class="rnd-num">Round 2 of 3</div>
-<div class="rnd-title">Round 2: Supply Chain Pressure</div>
-<div class="rnd-sit">Your company in Paris demands more pelts. The beaver population near settlements is declining. First Nations are pushing for better terms. Meanwhile, the British are offering guns more freely. What do you do?</div>
-<div class="opts-grid"><button class="opt-btn" onclick="pickOpt(1,0,'french')">Invest in fair trade and help develop sustainable harvesting practices with First Nations partners.</button><button class="opt-btn" onclick="pickOpt(1,1,'french')">Arm First Nations allies more heavily and push them to trap at unsustainable rates.</button><button class="opt-btn" onclick="pickOpt(1,2,'french')">Establish a system of credit that keeps First Nations communities in debt to you.</button></div>
-<div class="outcome-box" id="outcome-french-1"></div>
-</div><div class="round-block" id="round-french-2">
-<div class="rnd-num">Round 3 of 3</div>
-<div class="rnd-title">Round 3: The Legacy Question</div>
-<div class="rnd-sit">It is 1750. Competition with the British is intensifying. New France's survival depends on First Nations alliances. How do you approach the relationship for the future?</div>
-<div class="opts-grid"><button class="opt-btn" onclick="pickOpt(2,0,'french')">Honour all agreements, share power, and advocate for First Nations interests with the Crown.</button><button class="opt-btn" onclick="pickOpt(2,1,'french')">Focus only on military alliance — forget trade as it becomes less profitable.</button><button class="opt-btn" onclick="pickOpt(2,2,'french')">Encourage settlement near First Nations villages to 'civilize' and Christianize them.</button></div>
-<div class="outcome-box" id="outcome-french-2"></div>
-</div></div>
-<div class="result-screen" id="result-screen">
-<h2>&#129332; Your Trade Legacy</h2>
-<div class="result-score" id="res-score"></div>
-<div class="result-verdict" id="res-verdict"></div>
-<div class="hist-note" id="res-hist"></div>
-<button class="reset-btn" onclick="resetGame()">Play Again (Switch Perspective)</button>
-</div>
-</div>
-</section>
-<section class="curric-sec"><div class="curric-wrap">
-<button class="ctog" id="ctog" onclick="toggleCurric()">
-<span>&#128203; Curriculum Connection &mdash; for Teachers</span><span class="cico" id="cico">&#9660;</span></button>
-<div class="cbody" id="cbody">
-<div class="cgrid">
-<div class="ci"><label>Subject &amp; Grade</label><span>Grade 7 &mdash; History</span></div>
-<div class="ci"><label>Strand</label><span>New France and British North America: New France and the Fur Trade 1713&ndash;1850</span></div>
-</div>
-<div class="cexp"><div class="ecode">A2.3 &mdash; The Fur Trade Economy and Indigenous Peoples</div>
-<div class="etxt">Describe the economic and social effects of the fur trade on Indigenous peoples and European colonists, and explain how the trade shaped power relationships in New France.</div></div>
-<div class="cexp" style="margin-top:.6rem"><div class="ecode">A1.3 &mdash; Multiple Perspectives in History</div>
-<div class="etxt">Demonstrate the ability to analyse historical events from multiple perspectives, including those of Indigenous peoples and European colonists, and explain how perspective influences historical interpretation.</div></div>
-<div class="chow"><strong>How this tool addresses it:</strong> Students play as either an Indigenous trader or a French coureur de bois across three rounds of negotiation decisions. Immediate consequences mirror documented historical patterns (dependency cycles, alliance strategies, ecological collapse). Playing both perspectives builds the historical empathy and multi-perspective analysis skills central to Ontario's historical thinking curriculum.</div>
-</div></div></section>
-<footer><strong>ClassroomTools</strong> &middot; Fur Trade Negotiator &middot; Grade 7 History</footer>
+.persp-title{font-weight:800;font-size:1rem;margin-bottom:.3rem}
+.persp-desc{font-size:.8rem;opacity:.8}
+#game{display:none}
+.context-bar{background:var(--dark);color:var(--gold2);padding:.75rem 1.25rem;border-radius:10px;margin-bottom:1rem;font-size:.88rem}
+.round-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;flex-wrap:wrap;gap:.5rem}
+.round-header h2{font-size:1.1rem;font-weight:800;color:var(--dark)}
+.round-badge{background:var(--brown);color:var(--cream);padding:.3rem .8rem;border-radius:999px;font-size:.78rem;font-weight:700}
+.scenario-card{background:#fff;border:2px solid var(--border);border-radius:14px;padding:1.5rem;margin-bottom:1rem}
+.scenario-card h3{font-size:1rem;font-weight:800;color:var(--dark);margin-bottom:.4rem}
+.scenario-card .situation{font-size:.9rem;color:var(--muted);margin-bottom:1rem}
+.choices{display:flex;flex-direction:column;gap:.6rem}
+.choice-btn{background:var(--cream);border:2px solid var(--border);border-radius:9px;padding:.85rem 1rem;cursor:pointer;font-size:.9rem;color:var(--text);text-align:left;transition:all .2s;font-weight:600}
+.choice-btn:hover{border-color:var(--brown2);background:#f5ede0}
+.choice-btn:disabled{cursor:default;opacity:.7}
+.tradeoff{background:#f9f3e8;border-left:4px solid var(--gold);border-radius:0 8px 8px 0;padding:.85rem 1rem;margin-top:.75rem;display:none}
+.tradeoff h4{font-weight:700;color:var(--brown);margin-bottom:.4rem;font-size:.9rem}
+.tradeoff .pros{color:var(--green2);font-size:.87rem;margin-bottom:.3rem}
+.tradeoff .cons{color:#c0392b;font-size:.87rem}
+.next-btn{background:var(--brown);color:#fff;border:none;padding:.7rem 1.75rem;border-radius:8px;font-size:.95rem;font-weight:700;cursor:pointer;margin-top:.75rem;display:none}
+.next-btn:hover{background:var(--brown2)}
+#outcome{display:none}
+.outcome-card{background:linear-gradient(135deg,var(--dark),var(--brown));border-radius:14px;padding:2rem;color:var(--cream);margin-bottom:1.5rem}
+.outcome-card h2{font-size:1.4rem;font-weight:800;color:var(--gold2);margin-bottom:.5rem}
+.outcome-score{font-size:2.5rem;font-weight:900;color:var(--gold2);margin:.5rem 0}
+.outcome-verdict{font-size:1rem;margin-bottom:1.25rem;opacity:.9}
+.hist-box{background:rgba(255,255,255,.08);border-radius:10px;padding:1.25rem;margin-bottom:1rem}
+.hist-box h3{color:var(--gold2);font-weight:700;margin-bottom:.5rem;font-size:.95rem}
+.hist-box p{font-size:.87rem;line-height:1.7}
+.restart-btn{background:var(--gold);color:var(--dark);border:none;padding:.75rem 2rem;border-radius:8px;font-size:1rem;font-weight:800;cursor:pointer}
+.restart-btn:hover{background:var(--gold2)}
+details.curr{background:#fff;border:2px solid var(--border);border-radius:14px;margin-bottom:2rem}
+details.curr summary{padding:1rem 1.5rem;cursor:pointer;font-weight:700;color:var(--brown);list-style:none;display:flex;justify-content:space-between;align-items:center}
+details.curr summary::after{content:"\25BC";font-size:.8rem}
+details.curr[open] summary::after{content:"\25B2"}
+.cb{padding:1rem 1.5rem 1.5rem;color:var(--muted)}
+.ctags{display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:.75rem}
+.ct{background:var(--cream);border:1px solid var(--border);border-radius:6px;padding:.3rem .7rem;font-size:.82rem}
+.ct strong{color:var(--brown)}
+footer{text-align:center;padding:2rem 1rem;color:var(--muted);font-size:.82rem;border-top:1px solid var(--border)}
+</style>
+</head>
+<body>
+<nav>
+  <a href="../" class="back">&larr; Back to Classroom Tools</a>
+  <span style="font-weight:700">&#9876;&#65039; Fur Trade Negotiator</span>
+  <span class="badge">Gr. 7 History &middot; B1.3</span>
+</nav>
+<main>
+  <h1>The Fur Trade Negotiator</h1>
+  <p class="intro">New France, early 1700s. The fur trade is booming &mdash; beaver pelts are worth a fortune in Europe. But behind every trade deal is a complex negotiation with real consequences. Choose your perspective and navigate three critical decisions.</p>
+
+  <div class="persp-section">
+    <h2>Choose Your Perspective to Begin</h2>
+    <div class="persp-grid">
+      <button class="persp-btn" id="btn-indigenous" onclick="choosePerspective('indigenous')">
+        <div class="persp-icon">&#129814;</div>
+        <div class="persp-title">Indigenous Trader</div>
+        <div class="persp-desc">Haudenosaunee leader negotiating for your community's long-term wellbeing</div>
+      </button>
+      <button class="persp-btn" id="btn-french" onclick="choosePerspective('french')">
+        <div class="persp-icon">&#129470;&#65039;</div>
+        <div class="persp-title">French Fur Trader</div>
+        <div class="persp-desc">A Coureur des bois trying to secure furs for the Company of New France</div>
+      </button>
+    </div>
+  </div>
+
+  <div id="game">
+    <div class="context-bar" id="ctx-bar"></div>
+    <div id="round-area"></div>
+  </div>
+  <div id="outcome"></div>
+
+  <details class="curr">
+    <summary>&#128203; Curriculum Connection &mdash; for Teachers</summary>
+    <div class="cb">
+      <div class="ctags">
+        <span class="ct"><strong>Subject:</strong> History</span>
+        <span class="ct"><strong>Grade:</strong> 7</span>
+        <span class="ct"><strong>Strand:</strong> New France, 1713&ndash;1850</span>
+        <span class="ct"><strong>Expectation:</strong> B1.3</span>
+      </div>
+      <p style="margin-bottom:.75rem"><strong>Expectation B1.3:</strong> Describe the nature of relationships between Indigenous peoples and European settlers during the fur trade era, including trade networks, alliances, and the impacts of European goods and practices.</p>
+      <p><strong>How this tool addresses it:</strong> Students take the perspective of either an Indigenous leader or a French fur trader and navigate three negotiation decisions, each with real historical tradeoffs. The simulation reveals asymmetries of power, the role of diplomatic protocols, and the long-term consequences of trade goods and territorial agreements. The outcome screen links student choices to actual historical consequences.</p>
+    </div>
+  </details>
+</main>
+<footer>ClassroomTools &middot; Ontario Curriculum &middot; Interactive Learning</footer>
+
 <script>
-const ROUNDS={"indig": [{"r": 1, "title": "Round 1: The First Meeting", "situation": "It is 1715 at a trading post near the St. Lawrence River. French traders arrive with metal tools, blankets, and muskets. They want beaver pelts. You are an Algonquin trading leader. What do you offer?", "opts": [{"label": "Offer only a small number of pelts to test their intentions. Maintain strategic balance.", "outcome": "Your cautious approach earns respect. You receive fair trade goods and the relationship starts on balanced terms. Your people retain access to most of the beaver population.", "score": 3}, {"label": "Trade as many pelts as you can for as many muskets as possible to protect your people.", "outcome": "You gain military advantage short-term, but your pelts are now depleted in this territory. The traders know you are dependent. They will push for more favourable terms next season.", "score": 1}, {"label": "Refuse to trade until the French recognize your territorial authority over these lands.", "outcome": "The French are annoyed but agree to a symbolic recognition. You establish an important precedent, though some goods are lost by the delay.", "score": 2}]}, {"r": 2, "title": "Round 2: The Dependency Trap", "situation": "Three years later, your community has become accustomed to European metal tools and blankets. The French now demand exclusivity \u2014 you must trade only with them. A British trader has arrived offering better prices. What do you do?", "opts": [{"label": "Accept French exclusivity. Stability and established relationships matter more than better prices.", "outcome": "You maintain peace but lose leverage. Over time, the French use the exclusive agreement to lower the value of trade goods. Your economic independence weakens.", "score": 1}, {"label": "Negotiate with both traders, creating competition that raises your bargaining power.", "outcome": "Both traders compete for your furs, improving your terms significantly. This is exactly how many First Nations maintained economic power during the fur trade era.", "score": 3}, {"label": "Reject both traders and rely entirely on traditional methods.", "outcome": "Traditional methods sustain your community but other groups with European weapons gain military and trade advantages. Your geopolitical position weakens.", "score": 2}]}, {"r": 3, "title": "Round 3: The Long-Term Consequence", "situation": "It is 1750. The beaver population has been dramatically reduced due to over-trapping across the region. Disease has struck your community. The French are pushing your people further from your traditional territory. You must make a strategic decision.", "opts": [{"label": "Form an alliance with other First Nations to collectively renegotiate territory and trade terms.", "outcome": "Alliance building works \u2014 you present a unified front that the French cannot ignore. This strategy was used effectively by the Haudenosaunee Confederacy and others throughout this period.", "score": 3}, {"label": "Accept French offers of 'protection' and closer settlement near their forts.", "outcome": "Short-term safety comes at the cost of long-term sovereignty. Your people's territory shrinks as settlers follow French protection. This is a pattern repeated across New France.", "score": 1}, {"label": "Relocate further west to new beaver territory, maintaining independence but losing traditional land.", "outcome": "Relocation preserves independence and finds new resources, but your traditional territory is left open to French occupation. Future generations will not know these lands.", "score": 2}]}], "french": [{"r": 1, "title": "Round 1: Establishing Trade", "situation": "It is 1715. You are a French coureur de bois (fur trader) trying to establish relations with the Algonquin people. Your company needs beaver pelts to supply European hat markets. What is your approach?", "opts": [{"label": "Offer generous terms and gifts to build genuine trust and a long-term partnership.", "outcome": "Investment in relationship pays off. The Algonquin become reliable trading partners. Your long-term supply is secure and you build valuable knowledge of the territory from them.", "score": 3}, {"label": "Offer the minimum necessary \u2014 you need to maximize profit on every trade.", "outcome": "You extract maximum value short-term, but word spreads. The Algonquin see through the poor terms and begin trading with your competitors. Your supply becomes unreliable.", "score": 1}, {"label": "Claim the territory for New France and impose French trading regulations.", "outcome": "Legal claims anger the Algonquin who have lived here for generations. Conflict disrupts trade for years. Force and legal claims rarely work as well as genuine negotiation in this period.", "score": 2}]}, {"r": 2, "title": "Round 2: Supply Chain Pressure", "situation": "Your company in Paris demands more pelts. The beaver population near settlements is declining. First Nations are pushing for better terms. Meanwhile, the British are offering guns more freely. What do you do?", "opts": [{"label": "Invest in fair trade and help develop sustainable harvesting practices with First Nations partners.", "outcome": "Working with Indigenous knowledge on sustainable harvest ensures long-term supply. The Algonquin respect your approach and become true partners, sharing knowledge of new territory.", "score": 3}, {"label": "Arm First Nations allies more heavily and push them to trap at unsustainable rates.", "outcome": "Short-term supply increases, but the ecological collapse you trigger within a decade costs you everything. Over-armed rivals create instability. This short-sighted approach mirrors real historical mistakes.", "score": 1}, {"label": "Establish a system of credit that keeps First Nations communities in debt to you.", "outcome": "Credit-based dependency gives you leverage, but it generates deep resentment and eventual resistance. This approach was historically common but ethically questionable and strategically fragile.", "score": 2}]}, {"r": 3, "title": "Round 3: The Legacy Question", "situation": "It is 1750. Competition with the British is intensifying. New France's survival depends on First Nations alliances. How do you approach the relationship for the future?", "opts": [{"label": "Honour all agreements, share power, and advocate for First Nations interests with the Crown.", "outcome": "Your reputation as an honourable partner makes First Nations strong allies in the coming Seven Years War. Those who chose this path built relationships that lasted generations.", "score": 3}, {"label": "Focus only on military alliance \u2014 forget trade as it becomes less profitable.", "outcome": "Abandoning trade relationships damages trust. First Nations see through purely military convenience. They begin shifting their alliances to whoever offers better long-term terms.", "score": 2}, {"label": "Encourage settlement near First Nations villages to 'civilize' and Christianize them.", "outcome": "This approach mirrors colonial policies that caused immense harm. It destroys the diplomatic relationship built over decades and accelerates the conflict that will end New France.", "score": 1}]}]};
-let perspective=null,scores=[],currentRound=0;
-function choosePerspective(p){
-  perspective=p;scores=[];currentRound=0;
-  document.querySelectorAll('.persp-btn').forEach(b=>b.classList.remove('selected'));
-  document.getElementById('btn-'+p).classList.add('selected');
-  document.getElementById('game-area').style.display='block';
-  document.getElementById('rounds-indig').style.display=p==='indig'?'block':'none';
-  document.getElementById('rounds-french').style.display=p==='french'?'block':'none';
-  document.getElementById('result-screen').style.display='none';
-  activateRound(0);
-  document.getElementById('game-area').scrollIntoView({behavior:'smooth',block:'start'});
-}
-function activateRound(r){
-  document.querySelectorAll('#rounds-'+perspective+' .round-block').forEach((el,i)=>{
-    el.classList.toggle('active',i===r);
-  });
-}
-function pickOpt(rndIdx,optIdx,pid){
-  if(pid!==perspective) return;
-  const rnd=ROUNDS[pid][rndIdx];
-  const opt=rnd.opts[optIdx];
-  scores.push(opt.score);
-  const allBtns=document.querySelectorAll('#round-'+pid+'-'+rndIdx+' .opt-btn');
-  allBtns.forEach(b=>b.disabled=true);
-  const chosen=allBtns[optIdx];
-  const cls=opt.score===3?'chosen-good':opt.score===2?'chosen-ok':'chosen-poor';
-  chosen.classList.add(cls);
-  const ob=document.getElementById('outcome-'+pid+'-'+rndIdx);
-  const ocls=opt.score===3?'good':opt.score===2?'ok':'poor';
-  ob.innerHTML=opt.outcome+'<br/><button class="next-btn" onclick="nextRound('+rndIdx+')">'+(rndIdx<2?'Next Round &rarr;':'See Your Legacy &rarr;')+'</button>';
-  ob.className='outcome-box show '+ocls;
-}
-function nextRound(r){
-  if(r<2){activateRound(r+1);}
-  else{showResult();}
-}
-function showResult(){
-  const total=scores.reduce((a,b)=>a+b,0);
-  const max=9;
-  document.getElementById('result-screen').style.display='block';
-  document.getElementById('res-score').textContent=total+'/'+max;
-  const pct=total/max;
-  let verdict,hist;
-  if(perspective==='indig'){
-    verdict=pct>=.8?'Outstanding strategic leadership! Your decisions protected your community's sovereignty and created balanced trade relationships — consistent with the most successful Indigenous diplomatic strategies of the era.':pct>=.55?'Your leadership showed wisdom in some rounds but some choices created vulnerability. Many leaders faced these impossible dilemmas with incomplete information.':'Difficult outcomes. The choices you made mirror patterns that historically led to dependency and land loss — a reminder of how deliberately the colonial system was designed to undermine Indigenous autonomy.';
-    hist='Historical context: The most successful Indigenous nations during the fur trade era were those who maintained multiple trading partners, used diplomatic skills to create competition, and resisted dependency on any single European power. The Haudenosaunee Confederacy is the prime example of this strategy.';
-  } else {
-    verdict=pct>=.8?'Excellent trading leadership! Your approach built genuine partnerships and sustainable practices — the rare traders who operated this way built the most durable and profitable networks in New France's history.':pct>=.55?'Mixed results. You balanced short-term profit with relationship-building to varying degrees. The real traders who succeeded long-term were those who learned from failures exactly like yours.':'Your short-term thinking led to broken relationships and ecological collapse. This mirrors the actual fate of many trading companies that prioritized extraction over partnership in New France.';
-    hist='Historical context: The most successful coureurs de bois were those who learned Indigenous languages, respected Indigenous protocols, and operated as genuine partners rather than extractors. Those who exploited relationships typically found their supply networks collapse within a generation.';
+var SCENARIOS = {
+  indigenous: [
+    {
+      round: 1,
+      title: "The Beaver Pelt Deal",
+      situation: "A French trader offers iron cooking pots, knives, and wool blankets in exchange for a large supply of beaver pelts. Your community needs these goods — but agreeing means hunting beaver intensively in your territory.",
+      choices: [
+        { text: "Accept the full deal — we need the goods now", pros: "Iron tools improve daily life immediately; warm blankets reduce illness", cons: "Over-hunting will deplete beaver; sets a precedent of large-scale extraction", score: 1 },
+        { text: "Negotiate a smaller deal — only what you truly need", pros: "Protects your beaver population; maintains ecological balance", cons: "French trader may go to rival Nations instead", score: 2 },
+        { text: "Propose different trade goods — dried fish and corn", pros: "Preserves your land; introduces new trade goods", cons: "French may reject this — they specifically want beaver", score: 2 }
+      ]
+    },
+    {
+      round: 2,
+      title: "Guns or No Guns?",
+      situation: "The French offer firearms in exchange for exclusive trading rights in your territory. Enemy Nations to the south already have European muskets. Without them you are vulnerable.",
+      choices: [
+        { text: "Accept firearms in exchange for exclusive trading rights", pros: "Military advantage over rivals; immediate security", cons: "Exclusive deal locks your community to French alliance; dependency grows", score: 1 },
+        { text: "Accept firearms but refuse exclusive rights", pros: "Military protection while maintaining trade independence", cons: "French may cut off supplies at a critical moment", score: 2 },
+        { text: "Refuse firearms — maintain traditional weapons and neutrality", pros: "Preserve cultural independence; avoid European dependency", cons: "Enormous military risk if rivals or Europeans attack", score: 1 }
+      ]
+    },
+    {
+      round: 3,
+      title: "The Trading Post Agreement",
+      situation: "The French want to build a permanent trading post on land your community uses seasonally for hunting and ceremony. They offer continued trade access and protection from rival Nations.",
+      choices: [
+        { text: "Grant permission for the permanent trading post", pros: "Guaranteed trade partner; some protection", cons: "Permanent European presence; trade post often becomes settlement foothold", score: 1 },
+        { text: "Allow a seasonal market only — no permanent structure", pros: "Controls European presence; preserves seasonal land use", cons: "French see this as weak commitment", score: 2 },
+        { text: "Refuse and propose a neutral trading ground", pros: "Protects your territory; maintains sovereignty", cons: "French may turn this into a diplomatic incident", score: 2 }
+      ]
+    }
+  ],
+  french: [
+    {
+      round: 1,
+      title: "Wampum and Protocols",
+      situation: "Before trading begins, the Haudenosaunee leader insists on a formal gift exchange and a wampum ceremony. This will take two days. Your company expects you back with furs on schedule.",
+      choices: [
+        { text: "Participate fully — give generous gifts and respect the ceremony", pros: "Builds genuine trust; this Nation will be a reliable long-term partner", cons: "Delays your return; costs you trade goods upfront", score: 2 },
+        { text: "Give token gifts and rush through the ceremony", pros: "Saves time and goods", cons: "Insults your hosts; this Nation will remember and may refuse future trade", score: 0 },
+        { text: "Skip the ceremony — explain your time pressure honestly", pros: "Honest communication may be respected", cons: "Very likely seen as disrespectful; damages relationship permanently", score: 1 }
+      ]
+    },
+    {
+      round: 2,
+      title: "The Brandy Question",
+      situation: "You have brandy (alcohol) which you know is in high demand. Trading it will get you more furs quickly. But you have seen how it harms communities, and the Church has forbidden it.",
+      choices: [
+        { text: "Trade the brandy — you are here to get furs, not moralize", pros: "Maximizes short-term profit", cons: "Causes serious harm; deepens dependency; illegal; license revoked if caught", score: 0 },
+        { text: "Offer brandy only as a small ceremonial gift, not trade goods", pros: "Maintains relationship warmth without large-scale harm", cons: "Misses profit opportunity; line between gift and trade is blurry", score: 1 },
+        { text: "Refuse to trade brandy — offer higher-quality tools instead", pros: "Ethical; sustainable relationship; avoids legal risk", cons: "Leaves profit on the table; rival traders may fill the gap", score: 2 }
+      ]
+    },
+    {
+      round: 3,
+      title: "Whose Map Is It?",
+      situation: "Your company wants you to map the territory and claim it for France. The Haudenosaunee have never agreed to French sovereignty here. You need their continued cooperation.",
+      choices: [
+        { text: "Map and claim the territory — France comes first", pros: "Fulfills your company mandate", cons: "If the Nation finds out, all trust and trade collapses; violates their sovereignty", score: 0 },
+        { text: "Map the rivers and resources but do not file a sovereignty claim", pros: "Gathers useful geographic data without the political flashpoint", cons: "Your company will be annoyed you did not complete the full task", score: 1 },
+        { text: "Refuse to map — document trade routes only and respect Indigenous territory", pros: "Preserves the relationship and your integrity", cons: "Company may send a less scrupulous trader who does more damage", score: 2 }
+      ]
+    }
+  ]
+};
+
+var HISTORY = {
+  indigenous: {
+    high: "Your choices reflect the careful diplomacy that allowed many Nations to maintain power and cultural integrity through the early fur trade era. Nations that negotiated selectively — limiting resource extraction, maintaining trade flexibility, and protecting their land — were far better positioned when European pressure intensified later.",
+    low: "The choices you made reflect patterns that led many communities to severe over-dependence on European goods and military alliances. When beaver populations collapsed and European politics shifted, Nations locked into exclusive dependency faced devastating consequences — including the Beaver Wars of the mid-1600s."
+  },
+  french: {
+    high: "Your approach — respecting Indigenous protocols, refusing exploitative trade, and protecting sovereignty — reflects the relationship-building that created the most durable French alliances. Traders who respected Indigenous customs built partnerships that lasted generations.",
+    low: "Several of your choices reflect the patterns of extraction and disrespect that poisoned French-Indigenous relations over time. Short-term profit thinking — trading brandy, skipping ceremonies, claiming land — undermined the trust that the entire fur trade economy depended on. By the 1750s, fractured alliances contributed to France losing New France to Britain."
   }
-  document.getElementById('res-verdict').textContent=verdict;
-  document.getElementById('res-hist').innerHTML='<strong>&#128218; Historical Note:</strong> '+hist;
-  document.getElementById('result-screen').scrollIntoView({behavior:'smooth'});
+};
+
+var perspective = null;
+var roundNum = 0;
+var totalScore = 0;
+
+function choosePerspective(p) {
+  perspective = p;
+  document.getElementById('btn-indigenous').classList.toggle('active', p === 'indigenous');
+  document.getElementById('btn-french').classList.toggle('active', p === 'french');
+  document.getElementById('game').style.display = 'block';
+  document.getElementById('outcome').style.display = 'none';
+  roundNum = 0;
+  totalScore = 0;
+  var ctx = p === 'indigenous'
+    ? 'You are a Haudenosaunee (Iroquois) leader. Your decisions will affect your community for generations.'
+    : 'You are a Coureur des bois working for the Company of New France. Bring back furs — but at what cost?';
+  document.getElementById('ctx-bar').textContent = ctx;
+  showRound();
 }
-function resetGame(){
-  perspective=null;scores=[];currentRound=0;
-  document.querySelectorAll('.persp-btn').forEach(b=>b.classList.remove('selected'));
-  document.getElementById('rounds-indig').style.display='none';
-  document.getElementById('rounds-french').style.display='none';
-  document.getElementById('result-screen').style.display='none';
-  document.getElementById('game-area').style.display='none';
-  document.querySelectorAll('.round-block').forEach(el=>{
-    el.classList.remove('active');
-    el.querySelectorAll('.opt-btn').forEach(b=>{b.disabled=false;b.className='opt-btn'});
-    el.querySelectorAll('.outcome-box').forEach(o=>{o.className='outcome-box';o.innerHTML=''});
-  });
-  window.scrollTo({top:document.querySelector('.perspective-sec').offsetTop-60,behavior:'smooth'});
+
+function showRound() {
+  var scenarios = SCENARIOS[perspective];
+  if (roundNum >= scenarios.length) {
+    showOutcome();
+    return;
+  }
+  var s = scenarios[roundNum];
+  var choicesHtml = s.choices.map(function(c, i) {
+    return '<button class="choice-btn" onclick="choose(' + i + ')">' + c.text + '</button>';
+  }).join('');
+  document.getElementById('round-area').innerHTML =
+    '<div class="round-header">' +
+      '<h2>' + s.title + '</h2>' +
+      '<span class="round-badge">Round ' + s.round + ' of 3</span>' +
+    '</div>' +
+    '<div class="scenario-card">' +
+      '<h3>The Situation</h3>' +
+      '<p class="situation">' + s.situation + '</p>' +
+      '<div class="choices" id="choices">' + choicesHtml + '</div>' +
+      '<div class="tradeoff" id="tradeoff"></div>' +
+      '<button class="next-btn" id="next-btn" onclick="nextRound()">Next Round &rarr;</button>' +
+    '</div>';
 }
-function toggleCurric(){
-  document.getElementById('cbody').classList.toggle('open');
-  document.getElementById('cico').classList.toggle('open');
+
+function choose(i) {
+  var s = SCENARIOS[perspective][roundNum];
+  var c = s.choices[i];
+  totalScore += c.score;
+  var btns = document.querySelectorAll('.choice-btn');
+  for (var b = 0; b < btns.length; b++) { btns[b].disabled = true; }
+  var td = document.getElementById('tradeoff');
+  td.innerHTML = '<h4>Consequences of your choice:</h4><div class="pros">+ ' + c.pros + '</div><div class="cons">- ' + c.cons + '</div>';
+  td.style.display = 'block';
+  document.getElementById('next-btn').style.display = 'inline-block';
 }
-</script></body></html>
+
+function nextRound() {
+  roundNum++;
+  showRound();
+}
+
+function showOutcome() {
+  document.getElementById('game').style.display = 'none';
+  var maxScore = SCENARIOS[perspective].length * 2;
+  var pct = Math.round(totalScore / maxScore * 100);
+  var hist = totalScore >= 4 ? HISTORY[perspective].high : HISTORY[perspective].low;
+  var perspLabel = perspective === 'indigenous' ? 'Indigenous Trader' : 'French Fur Trader';
+  var verdict = pct >= 70
+    ? 'Strong negotiator — your choices reflect long-term thinking and respect.'
+    : pct >= 40
+    ? 'Mixed results — some of your choices will have lasting consequences.'
+    : 'Your decisions created dependencies and tensions that are difficult to undo.';
+  document.getElementById('outcome').innerHTML =
+    '<div class="outcome-card">' +
+      '<h2>Your Outcome &mdash; ' + perspLabel + '</h2>' +
+      '<div class="outcome-score">' + totalScore + '/' + maxScore + ' points</div>' +
+      '<div class="outcome-verdict">' + verdict + '</div>' +
+      '<div class="hist-box"><h3>What Actually Happened Historically</h3><p>' + hist + '</p></div>' +
+      '<div class="hist-box"><h3>The Bigger Picture</h3><p>The fur trade created one of the most complex economic and diplomatic networks in North American history. The decisions made during this era — about territory, alliance, and trade — shaped the boundaries, communities, and inequalities that still define Canada today.</p></div>' +
+      '<button class="restart-btn" onclick="restart()">Play Again &mdash; Switch Perspective</button>' +
+    '</div>';
+  document.getElementById('outcome').style.display = 'block';
+  document.getElementById('outcome').scrollIntoView({ behavior: 'smooth' });
+}
+
+function restart() {
+  document.getElementById('outcome').style.display = 'none';
+  document.getElementById('game').style.display = 'none';
+  document.getElementById('btn-indigenous').classList.remove('active');
+  document.getElementById('btn-french').classList.remove('active');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+</script>
+</body>
+</html>
