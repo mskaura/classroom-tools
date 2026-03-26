@@ -1,0 +1,1021 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Math Translations Explorer - Grade 8</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Segoe UI', sans-serif;
+    background: #f0f4f8;
+    color: #222;
+    min-height: 100vh;
+  }
+
+  header {
+    background: #1a237e;
+    color: white;
+    padding: 14px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  header h1 { font-size: 1.3rem; font-weight: 700; }
+  header p { font-size: 0.85rem; opacity: 0.8; }
+
+  .tab-bar {
+    display: flex;
+    background: #283593;
+    padding: 0 24px;
+  }
+
+  .tab-btn {
+    background: none;
+    border: none;
+    color: rgba(255,255,255,0.7);
+    padding: 12px 20px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    border-bottom: 3px solid transparent;
+    transition: all 0.2s;
+    font-weight: 500;
+  }
+
+  .tab-btn.active {
+    color: white;
+    border-bottom-color: #ffca28;
+  }
+
+  .tab-btn:hover { color: white; }
+
+  .tab-content { display: none; padding: 20px 24px; }
+  .tab-content.active { display: block; }
+
+  /* ---- GEOMETRIC TRANSLATIONS ---- */
+  .geo-layout {
+    display: grid;
+    grid-template-columns: 1fr 320px;
+    gap: 20px;
+    align-items: start;
+  }
+
+  @media (max-width: 800px) {
+    .geo-layout { grid-template-columns: 1fr; }
+  }
+
+  .canvas-container {
+    background: white;
+    border-radius: 10px;
+    padding: 16px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  }
+
+  canvas {
+    display: block;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    cursor: crosshair;
+    max-width: 100%;
+  }
+
+  .panel {
+    background: white;
+    border-radius: 10px;
+    padding: 18px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  }
+
+  .panel h3 {
+    font-size: 1rem;
+    margin-bottom: 14px;
+    color: #1a237e;
+    border-bottom: 2px solid #e8eaf6;
+    padding-bottom: 8px;
+  }
+
+  .rule-inputs {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+
+  .rule-inputs label { font-size: 0.82rem; color: #555; }
+
+  .rule-inputs input {
+    width: 100%;
+    padding: 8px 10px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 1rem;
+    text-align: center;
+    margin-top: 4px;
+  }
+
+  .rule-display {
+    background: #e8eaf6;
+    border-radius: 8px;
+    padding: 10px 14px;
+    font-family: monospace;
+    font-size: 0.95rem;
+    text-align: center;
+    margin-bottom: 14px;
+    color: #1a237e;
+    font-weight: 600;
+  }
+
+  .btn {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    cursor: pointer;
+    font-weight: 600;
+    margin-bottom: 8px;
+    transition: background 0.15s;
+  }
+
+  .btn-primary { background: #1a237e; color: white; }
+  .btn-primary:hover { background: #283593; }
+  .btn-secondary { background: #e8eaf6; color: #1a237e; }
+  .btn-secondary:hover { background: #c5cae9; }
+  .btn-warn { background: #fff3e0; color: #e65100; }
+  .btn-warn:hover { background: #ffe0b2; }
+
+  .coords-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.85rem;
+    margin-top: 10px;
+  }
+
+  .coords-table th {
+    background: #e8eaf6;
+    padding: 6px 10px;
+    text-align: center;
+    font-weight: 600;
+    color: #1a237e;
+  }
+
+  .coords-table td {
+    padding: 5px 10px;
+    text-align: center;
+    border-bottom: 1px solid #f0f0f0;
+  }
+
+  .legend {
+    display: flex;
+    gap: 14px;
+    margin-bottom: 10px;
+    font-size: 0.82rem;
+    flex-wrap: wrap;
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .legend-dot {
+    width: 14px;
+    height: 14px;
+    border-radius: 3px;
+  }
+
+  /* ---- PRACTICE MODE ---- */
+  .practice-layout {
+    max-width: 700px;
+    margin: 0 auto;
+  }
+
+  .practice-card {
+    background: white;
+    border-radius: 12px;
+    padding: 28px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    margin-bottom: 20px;
+  }
+
+  .practice-card .question {
+    font-size: 1.1rem;
+    margin-bottom: 20px;
+    line-height: 1.6;
+  }
+
+  .practice-card .question strong { color: #1a237e; }
+
+  .answer-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+
+  .answer-input-group label {
+    font-size: 0.82rem;
+    color: #555;
+    display: block;
+    margin-bottom: 4px;
+  }
+
+  .answer-input-group input {
+    width: 100%;
+    padding: 10px;
+    border: 2px solid #ccc;
+    border-radius: 8px;
+    font-size: 1.1rem;
+    text-align: center;
+    transition: border-color 0.2s;
+  }
+
+  .answer-input-group input:focus {
+    outline: none;
+    border-color: #1a237e;
+  }
+
+  .answer-input-group input.correct { border-color: #2e7d32; background: #e8f5e9; }
+  .answer-input-group input.wrong { border-color: #c62828; background: #ffebee; }
+
+  .feedback {
+    padding: 12px 16px;
+    border-radius: 8px;
+    font-weight: 600;
+    margin-bottom: 14px;
+    display: none;
+  }
+
+  .feedback.correct { background: #e8f5e9; color: #2e7d32; display: block; }
+  .feedback.wrong { background: #ffebee; color: #c62828; display: block; }
+
+  .score-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: white;
+    border-radius: 10px;
+    padding: 14px 20px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    margin-bottom: 20px;
+  }
+
+  .score-bar .score { font-size: 1.1rem; font-weight: 700; color: #1a237e; }
+  .score-bar .streak { font-size: 0.85rem; color: #555; }
+
+  .practice-type-toggle {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+  }
+
+  .type-btn {
+    padding: 8px 16px;
+    border: 2px solid #1a237e;
+    border-radius: 20px;
+    background: white;
+    color: #1a237e;
+    font-size: 0.85rem;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.15s;
+  }
+
+  .type-btn.active { background: #1a237e; color: white; }
+  .type-btn:hover { background: #e8eaf6; }
+  .type-btn.active:hover { background: #283593; }
+
+  /* ---- LINEAR PATTERNS ---- */
+  .linear-layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    align-items: start;
+  }
+
+  @media (max-width: 700px) {
+    .linear-layout { grid-template-columns: 1fr; }
+    .answer-grid { grid-template-columns: 1fr; }
+  }
+
+  .linear-card {
+    background: white;
+    border-radius: 10px;
+    padding: 18px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  }
+
+  .linear-card h3 {
+    font-size: 1rem;
+    margin-bottom: 14px;
+    color: #1a237e;
+    border-bottom: 2px solid #e8eaf6;
+    padding-bottom: 8px;
+  }
+
+  .pattern-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 14px;
+    font-size: 0.9rem;
+  }
+
+  .pattern-table th {
+    background: #1a237e;
+    color: white;
+    padding: 8px 12px;
+    text-align: center;
+  }
+
+  .pattern-table td {
+    border: 1px solid #e0e0e0;
+    padding: 8px 12px;
+    text-align: center;
+  }
+
+  .pattern-table td.highlight { background: #fff9c4; font-weight: 700; }
+
+  .pattern-controls {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 14px;
+  }
+
+  .pattern-controls label { font-size: 0.82rem; color: #555; }
+
+  .pattern-controls input {
+    width: 70px;
+    padding: 6px 8px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 0.95rem;
+    text-align: center;
+  }
+
+  .input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  #linearCanvas {
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    max-width: 100%;
+    display: block;
+  }
+
+  .equation-display {
+    background: #e8eaf6;
+    border-radius: 8px;
+    padding: 12px;
+    font-family: monospace;
+    font-size: 1.1rem;
+    text-align: center;
+    color: #1a237e;
+    font-weight: 700;
+    margin-bottom: 14px;
+  }
+
+  .section-title {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #888;
+    margin-bottom: 6px;
+    font-weight: 700;
+  }
+
+  .info-box {
+    background: #e3f2fd;
+    border-left: 4px solid #1565c0;
+    padding: 10px 14px;
+    border-radius: 0 8px 8px 0;
+    font-size: 0.85rem;
+    line-height: 1.5;
+    margin-bottom: 14px;
+    color: #0d47a1;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div>
+    <h1>Math Translations Explorer</h1>
+    <p>Grade 8 Ontario Curriculum &mdash; E1.4 &amp; C1.2</p>
+  </div>
+</header>
+
+<div class="tab-bar">
+  <button class="tab-btn active" onclick="switchTab('geo')">Geometric Translations</button>
+  <button class="tab-btn" onclick="switchTab('linear')">Linear Patterns</button>
+  <button class="tab-btn" onclick="switchTab('practice')">Practice</button>
+</div>
+
+<!-- ===== TAB 1: GEOMETRIC TRANSLATIONS ===== -->
+<div id="tab-geo" class="tab-content active">
+  <div class="geo-layout">
+    <div class="canvas-container">
+      <div class="legend">
+        <div class="legend-item"><div class="legend-dot" style="background:#1a237e"></div> Original shape</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#e53935"></div> Translated image</div>
+      </div>
+      <canvas id="geoCanvas" width="520" height="480"></canvas>
+    </div>
+
+    <div>
+      <div class="panel" style="margin-bottom:16px">
+        <h3>Translation Rule</h3>
+        <div class="info-box">
+          Enter how many units to move. Positive x = right, negative x = left.<br>
+          Positive y = up, negative y = down.
+        </div>
+        <div class="rule-inputs">
+          <div class="input-group">
+            <label>Move right/left (x)</label>
+            <input type="number" id="transX" value="3" min="-10" max="10" oninput="updateGeo()">
+          </div>
+          <div class="input-group">
+            <label>Move up/down (y)</label>
+            <input type="number" id="transY" value="2" min="-10" max="10" oninput="updateGeo()">
+          </div>
+        </div>
+        <div class="rule-display" id="ruleDisplay">(x, y) → (x + 3, y + 2)</div>
+        <button class="btn btn-secondary" onclick="randomShape()">Random Shape</button>
+        <button class="btn btn-warn" onclick="resetGeo()">Reset</button>
+      </div>
+
+      <div class="panel">
+        <h3>Coordinates</h3>
+        <table class="coords-table">
+          <thead>
+            <tr>
+              <th>Point</th>
+              <th>Original</th>
+              <th>Image</th>
+            </tr>
+          </thead>
+          <tbody id="coordsBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== TAB 2: LINEAR PATTERNS ===== -->
+<div id="tab-linear" class="tab-content">
+  <div class="linear-layout">
+    <div class="linear-card">
+      <h3>Pattern Builder</h3>
+      <div class="info-box">
+        Set the starting value (b) and the constant rate (m) to build a linear growing or shrinking pattern.
+      </div>
+      <div class="pattern-controls">
+        <div class="input-group">
+          <label>Starting value (b)</label>
+          <input type="number" id="patternB" value="2" oninput="updateLinear()">
+        </div>
+        <div class="input-group">
+          <label>Rate of change (m)</label>
+          <input type="number" id="patternM" value="3" oninput="updateLinear()">
+        </div>
+      </div>
+      <div class="section-title">Table of Values</div>
+      <table class="pattern-table" id="patternTable">
+        <thead><tr><th>Term (n)</th><th>Value</th></tr></thead>
+        <tbody id="patternBody"></tbody>
+      </table>
+      <div class="section-title">Algebraic Expression</div>
+      <div class="equation-display" id="equationDisplay">y = 3n + 2</div>
+      <div class="section-title">Pattern Type</div>
+      <div id="patternType" style="font-size:0.9rem;color:#444;padding:8px 0;"></div>
+    </div>
+
+    <div class="linear-card">
+      <h3>Graph</h3>
+      <canvas id="linearCanvas" width="360" height="320"></canvas>
+    </div>
+  </div>
+</div>
+
+<!-- ===== TAB 3: PRACTICE ===== -->
+<div id="tab-practice" class="tab-content">
+  <div class="practice-layout">
+    <div class="score-bar">
+      <div class="score" id="scoreDisplay">Score: 0 / 0</div>
+      <div class="streak" id="streakDisplay"></div>
+      <button class="btn btn-secondary" style="width:auto;padding:8px 16px" onclick="newQuestion()">New Question</button>
+    </div>
+
+    <div class="practice-type-toggle">
+      <button class="type-btn active" onclick="setPracticeType('geo')">Geometric Translation</button>
+      <button class="type-btn" onclick="setPracticeType('linear')">Linear Pattern</button>
+    </div>
+
+    <div class="practice-card" id="practiceCard">
+      <div class="question" id="practiceQuestion">Loading...</div>
+      <div class="answer-grid" id="answerGrid"></div>
+      <div class="feedback" id="feedback"></div>
+      <button class="btn btn-primary" onclick="checkAnswer()">Check Answer</button>
+      <button class="btn btn-secondary" id="nextBtn" style="display:none" onclick="newQuestion()">Next Question</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ============================================================
+// TAB SWITCHING
+// ============================================================
+function switchTab(id) {
+  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + id).classList.add('active');
+  event.target.classList.add('active');
+  if (id === 'geo') drawGeo();
+  if (id === 'linear') drawLinear();
+}
+
+// ============================================================
+// GEOMETRIC TRANSLATIONS
+// ============================================================
+const GRID_SIZE = 40;
+const ORIGIN_X = 260;
+const ORIGIN_Y = 240;
+
+let currentShape = [
+  {x: -3, y: 1}, {x: -1, y: 3}, {x: 1, y: 1}
+];
+
+const SHAPES = [
+  [{x:-3,y:1},{x:-1,y:3},{x:1,y:1}],
+  [{x:-4,y:0},{x:-1,y:0},{x:-1,y:2},{x:-4,y:2}],
+  [{x:-2,y:-1},{x:1,y:-1},{x:2,y:1},{x:-1,y:1}],
+  [{x:-1,y:0},{x:1,y:0},{x:0,y:2}],
+  [{x:-3,y:-1},{x:0,y:-1},{x:1,y:1},{x:-2,y:1}],
+];
+
+function gridToCanvas(gx, gy) {
+  return { cx: ORIGIN_X + gx * GRID_SIZE, cy: ORIGIN_Y - gy * GRID_SIZE };
+}
+
+function drawGeo() {
+  const canvas = document.getElementById('geoCanvas');
+  const ctx = canvas.getContext('2d');
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  const tx = parseInt(document.getElementById('transX').value) || 0;
+  const ty = parseInt(document.getElementById('transY').value) || 0;
+
+  // Draw grid
+  ctx.strokeStyle = '#e0e0e0';
+  ctx.lineWidth = 1;
+  for (let gx = -6; gx <= 6; gx++) {
+    const {cx} = gridToCanvas(gx, 0);
+    ctx.beginPath(); ctx.moveTo(cx, 0); ctx.lineTo(cx, canvas.height); ctx.stroke();
+  }
+  for (let gy = -6; gy <= 6; gy++) {
+    const {cy} = gridToCanvas(0, gy);
+    ctx.beginPath(); ctx.moveTo(0, cy); ctx.lineTo(canvas.width, cy); ctx.stroke();
+  }
+
+  // Axes
+  ctx.strokeStyle = '#333'; ctx.lineWidth = 2;
+  ctx.beginPath(); ctx.moveTo(0, ORIGIN_Y); ctx.lineTo(canvas.width, ORIGIN_Y); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(ORIGIN_X, 0); ctx.lineTo(ORIGIN_X, canvas.height); ctx.stroke();
+
+  // Axis labels
+  ctx.fillStyle = '#555'; ctx.font = '11px sans-serif'; ctx.textAlign = 'center';
+  for (let i = -6; i <= 6; i++) {
+    if (i === 0) continue;
+    const {cx} = gridToCanvas(i, 0);
+    ctx.fillText(i, cx, ORIGIN_Y + 16);
+    const {cy} = gridToCanvas(0, i);
+    ctx.textAlign = 'right';
+    ctx.fillText(i, ORIGIN_X - 6, cy + 4);
+    ctx.textAlign = 'center';
+  }
+  ctx.fillStyle = '#333'; ctx.font = 'bold 13px sans-serif';
+  ctx.fillText('x', canvas.width - 12, ORIGIN_Y - 8);
+  ctx.textAlign = 'right';
+  ctx.fillText('y', ORIGIN_X + 12, 14);
+
+  // Translated shape (draw first so original is on top)
+  const transPoints = currentShape.map(p => ({ x: p.x + tx, y: p.y + ty }));
+  drawPolygon(ctx, transPoints, 'rgba(229,57,53,0.2)', '#e53935', 2, true);
+
+  // Original shape
+  drawPolygon(ctx, currentShape, 'rgba(26,35,126,0.15)', '#1a237e', 2, false);
+
+  // Labels
+  ctx.font = 'bold 13px sans-serif';
+  currentShape.forEach((p, i) => {
+    const {cx, cy} = gridToCanvas(p.x, p.y);
+    const label = String.fromCharCode(65 + i);
+    ctx.fillStyle = '#1a237e';
+    ctx.textAlign = 'center';
+    ctx.fillText(label, cx - 10, cy - 8);
+  });
+  transPoints.forEach((p, i) => {
+    const {cx, cy} = gridToCanvas(p.x, p.y);
+    const label = String.fromCharCode(65 + i) + "'";
+    ctx.fillStyle = '#e53935';
+    ctx.textAlign = 'center';
+    ctx.fillText(label, cx + 10, cy - 8);
+  });
+
+  updateCoordsTable(transPoints);
+}
+
+function drawPolygon(ctx, pts, fill, stroke, lw, dashed) {
+  ctx.beginPath();
+  pts.forEach((p, i) => {
+    const {cx, cy} = gridToCanvas(p.x, p.y);
+    if (i === 0) ctx.moveTo(cx, cy); else ctx.lineTo(cx, cy);
+  });
+  ctx.closePath();
+  ctx.fillStyle = fill;
+  ctx.fill();
+  ctx.strokeStyle = stroke;
+  ctx.lineWidth = lw;
+  if (dashed) ctx.setLineDash([6, 3]); else ctx.setLineDash([]);
+  ctx.stroke();
+  ctx.setLineDash([]);
+
+  // Vertices
+  pts.forEach(p => {
+    const {cx, cy} = gridToCanvas(p.x, p.y);
+    ctx.beginPath();
+    ctx.arc(cx, cy, 4, 0, Math.PI * 2);
+    ctx.fillStyle = stroke;
+    ctx.fill();
+  });
+}
+
+function updateCoordsTable(transPoints) {
+  const tbody = document.getElementById('coordsBody');
+  tbody.innerHTML = '';
+  currentShape.forEach((p, i) => {
+    const tp = transPoints[i];
+    const label = String.fromCharCode(65 + i);
+    tbody.innerHTML += `<tr>
+      <td>${label}</td>
+      <td>(${p.x}, ${p.y})</td>
+      <td style="color:#e53935;font-weight:600">(${tp.x}, ${tp.y})</td>
+    </tr>`;
+  });
+}
+
+function updateGeo() {
+  const tx = parseInt(document.getElementById('transX').value) || 0;
+  const ty = parseInt(document.getElementById('transY').value) || 0;
+  const xStr = tx >= 0 ? `x + ${tx}` : `x - ${Math.abs(tx)}`;
+  const yStr = ty >= 0 ? `y + ${ty}` : `y - ${Math.abs(ty)}`;
+  document.getElementById('ruleDisplay').textContent = `(x, y) → (${xStr}, ${yStr})`;
+  drawGeo();
+}
+
+function randomShape() {
+  currentShape = SHAPES[Math.floor(Math.random() * SHAPES.length)];
+  drawGeo();
+}
+
+function resetGeo() {
+  document.getElementById('transX').value = 3;
+  document.getElementById('transY').value = 2;
+  currentShape = SHAPES[0];
+  updateGeo();
+}
+
+// ============================================================
+// LINEAR PATTERNS
+// ============================================================
+function updateLinear() {
+  const m = parseFloat(document.getElementById('patternM').value) || 0;
+  const b = parseFloat(document.getElementById('patternB').value) || 0;
+
+  // Table
+  const tbody = document.getElementById('patternBody');
+  tbody.innerHTML = '';
+  for (let n = 1; n <= 8; n++) {
+    const val = m * n + b;
+    tbody.innerHTML += `<tr><td>${n}</td><td class="${n===1?'highlight':''}">${val}</td></tr>`;
+  }
+
+  // Equation
+  let eq = 'y = ';
+  if (m === 0) eq += b;
+  else if (m === 1) eq += 'n';
+  else if (m === -1) eq += '-n';
+  else eq += `${m}n`;
+  if (b > 0) eq += ` + ${b}`;
+  else if (b < 0) eq += ` - ${Math.abs(b)}`;
+  document.getElementById('equationDisplay').textContent = eq;
+
+  // Pattern type
+  let typeMsg = '';
+  if (m > 0) typeMsg = `Growing pattern — increases by ${m} each term`;
+  else if (m < 0) typeMsg = `Shrinking pattern — decreases by ${Math.abs(m)} each term`;
+  else typeMsg = 'Constant pattern — value stays the same';
+  document.getElementById('patternType').textContent = typeMsg;
+
+  drawLinear();
+}
+
+function drawLinear() {
+  const canvas = document.getElementById('linearCanvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width, H = canvas.height;
+  const m = parseFloat(document.getElementById('patternM').value) || 0;
+  const b = parseFloat(document.getElementById('patternB').value) || 0;
+
+  ctx.clearRect(0, 0, W, H);
+
+  const PAD = 48;
+  const plotW = W - PAD * 2;
+  const plotH = H - PAD * 2;
+
+  const nMax = 8;
+  const vals = Array.from({length: nMax}, (_, i) => m * (i+1) + b);
+  const vMin = Math.min(...vals, 0);
+  const vMax = Math.max(...vals, 1);
+  const range = vMax - vMin || 1;
+
+  function toX(n) { return PAD + ((n - 1) / (nMax - 1)) * plotW; }
+  function toY(v) { return PAD + plotH - ((v - vMin) / range) * plotH; }
+
+  // Grid lines
+  ctx.strokeStyle = '#e0e0e0'; ctx.lineWidth = 1;
+  for (let n = 1; n <= nMax; n++) {
+    ctx.beginPath(); ctx.moveTo(toX(n), PAD); ctx.lineTo(toX(n), PAD + plotH); ctx.stroke();
+  }
+
+  // Axes
+  const yZero = toY(0);
+  ctx.strokeStyle = '#aaa'; ctx.lineWidth = 1;
+  if (yZero >= PAD && yZero <= PAD + plotH) {
+    ctx.beginPath(); ctx.moveTo(PAD, yZero); ctx.lineTo(PAD + plotW, yZero); ctx.stroke();
+  }
+  ctx.strokeStyle = '#333'; ctx.lineWidth = 2;
+  ctx.beginPath(); ctx.moveTo(PAD, PAD); ctx.lineTo(PAD, PAD + plotH); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(PAD, PAD + plotH); ctx.lineTo(PAD + plotW, PAD + plotH); ctx.stroke();
+
+  // Axis labels
+  ctx.fillStyle = '#555'; ctx.font = '11px sans-serif'; ctx.textAlign = 'center';
+  for (let n = 1; n <= nMax; n++) {
+    ctx.fillText(n, toX(n), PAD + plotH + 16);
+  }
+  ctx.textAlign = 'right';
+  [0, 1].forEach(frac => {
+    const v = Math.round(vMin + frac * range);
+    ctx.fillText(v, PAD - 6, toY(v) + 4);
+  });
+
+  // Axis labels
+  ctx.fillStyle = '#888'; ctx.font = '12px sans-serif'; ctx.textAlign = 'center';
+  ctx.fillText('Term (n)', PAD + plotW / 2, H - 4);
+  ctx.save(); ctx.translate(12, PAD + plotH / 2); ctx.rotate(-Math.PI / 2);
+  ctx.fillText('Value', 0, 0); ctx.restore();
+
+  // Line
+  ctx.beginPath(); ctx.strokeStyle = '#1a237e'; ctx.lineWidth = 2; ctx.setLineDash([4, 3]);
+  vals.forEach((v, i) => { const x = toX(i+1), y = toY(v); if (i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y); });
+  ctx.stroke(); ctx.setLineDash([]);
+
+  // Points
+  vals.forEach((v, i) => {
+    const x = toX(i+1), y = toY(v);
+    ctx.beginPath(); ctx.arc(x, y, 5, 0, Math.PI*2);
+    ctx.fillStyle = '#e53935'; ctx.fill();
+    ctx.strokeStyle = 'white'; ctx.lineWidth = 1.5; ctx.stroke();
+    ctx.fillStyle = '#1a237e'; ctx.font = 'bold 10px sans-serif'; ctx.textAlign = 'center';
+    ctx.fillText(Math.round(v*10)/10, x, y - 10);
+  });
+}
+
+// ============================================================
+// PRACTICE MODE
+// ============================================================
+let practiceType = 'geo';
+let practiceScore = 0;
+let practiceTotal = 0;
+let practiceStreak = 0;
+let currentAnswer = null;
+let answered = false;
+
+function setPracticeType(type) {
+  practiceType = type;
+  document.querySelectorAll('.type-btn').forEach(b => b.classList.remove('active'));
+  event.target.classList.add('active');
+  newQuestion();
+}
+
+function newQuestion() {
+  answered = false;
+  document.getElementById('feedback').className = 'feedback';
+  document.getElementById('feedback').textContent = '';
+  document.getElementById('nextBtn').style.display = 'none';
+
+  if (practiceType === 'geo') generateGeoQuestion();
+  else generateLinearQuestion();
+}
+
+function generateGeoQuestion() {
+  const questionTypes = ['findImage', 'findRule', 'findOriginal'];
+  const qType = questionTypes[Math.floor(Math.random() * questionTypes.length)];
+
+  // Random point
+  const px = Math.floor(Math.random() * 5) - 3;
+  const py = Math.floor(Math.random() * 5) - 2;
+  const tx = Math.floor(Math.random() * 7) - 3;
+  const ty = Math.floor(Math.random() * 7) - 3;
+  const ix = px + tx;
+  const iy = py + ty;
+
+  const xRule = tx >= 0 ? `x + ${tx}` : `x - ${Math.abs(tx)}`;
+  const yRule = ty >= 0 ? `y + ${ty}` : `y - ${Math.abs(ty)}`;
+
+  let question, inputs, answer;
+
+  if (qType === 'findImage') {
+    question = `Point A is at <strong>(${px}, ${py})</strong>. It is translated using the rule <strong>(x, y) → (${xRule}, ${yRule})</strong>.<br><br>What are the coordinates of A'?`;
+    inputs = [
+      { label: "A' x-coordinate", id: 'ans_x' },
+      { label: "A' y-coordinate", id: 'ans_y' }
+    ];
+    answer = { x: ix, y: iy };
+    currentAnswer = { type: 'geo2', answer };
+  } else if (qType === 'findOriginal') {
+    question = `After a translation of <strong>(x, y) → (${xRule}, ${yRule})</strong>, the image point A' is at <strong>(${ix}, ${iy})</strong>.<br><br>What were the original coordinates of A?`;
+    inputs = [
+      { label: "A x-coordinate", id: 'ans_x' },
+      { label: "A y-coordinate", id: 'ans_y' }
+    ];
+    answer = { x: px, y: py };
+    currentAnswer = { type: 'geo2', answer };
+  } else {
+    // findRule
+    question = `Point A is at <strong>(${px}, ${py})</strong> and its image A' is at <strong>(${ix}, ${iy})</strong>.<br><br>Describe the translation rule: (x, y) → (x + ?, y + ?)`;
+    inputs = [
+      { label: "x shift (+ or -)", id: 'ans_x' },
+      { label: "y shift (+ or -)", id: 'ans_y' }
+    ];
+    answer = { x: tx, y: ty };
+    currentAnswer = { type: 'geo2', answer };
+  }
+
+  document.getElementById('practiceQuestion').innerHTML = question;
+  const grid = document.getElementById('answerGrid');
+  grid.innerHTML = inputs.map(inp => `
+    <div class="answer-input-group">
+      <label>${inp.label}</label>
+      <input type="number" id="${inp.id}" placeholder="?">
+    </div>
+  `).join('');
+}
+
+function generateLinearQuestion() {
+  const qTypes = ['findValue', 'findEquation', 'findTerm'];
+  const qType = qTypes[Math.floor(Math.random() * qTypes.length)];
+
+  const m = Math.floor(Math.random() * 8) - 2; // -2 to 5
+  const b = Math.floor(Math.random() * 8) - 1; // -1 to 6
+  const n = Math.floor(Math.random() * 6) + 2;  // term 2-7
+
+  const mStr = m >= 0 ? `${m}` : `${m}`;
+  const bStr = b >= 0 ? `+ ${b}` : `- ${Math.abs(b)}`;
+  const eqStr = `y = ${m}n ${bStr}`;
+
+  let question, inputs, answer;
+
+  if (qType === 'findValue') {
+    question = `The pattern rule is <strong>${eqStr}</strong>.<br><br>What is the value when <strong>n = ${n}</strong>?`;
+    inputs = [{ label: 'Value', id: 'ans_val' }];
+    answer = { val: m * n + b };
+    currentAnswer = { type: 'linear1', answer };
+  } else if (qType === 'findEquation') {
+    const vals = [m*1+b, m*2+b, m*3+b, m*4+b];
+    question = `A pattern has these values:<br><br>
+    <table style="margin:10px auto;border-collapse:collapse;font-size:0.95rem">
+      <tr style="background:#e8eaf6"><th style="padding:6px 14px">n</th><th style="padding:6px 14px">Value</th></tr>
+      ${vals.map((v,i) => `<tr><td style="text-align:center;border:1px solid #ddd;padding:5px 14px">${i+1}</td><td style="text-align:center;border:1px solid #ddd;padding:5px 14px">${v}</td></tr>`).join('')}
+    </table>
+    What is the <strong>rate of change (m)</strong> and <strong>starting adjustment (b)</strong> in y = mn + b?`;
+    inputs = [
+      { label: 'Rate of change (m)', id: 'ans_m' },
+      { label: 'Starting value (b)', id: 'ans_b' }
+    ];
+    answer = { m, b };
+    currentAnswer = { type: 'linear2', answer };
+  } else {
+    // findTerm
+    const targetVal = m * n + b;
+    question = `The pattern rule is <strong>${eqStr}</strong>.<br><br>Which term number gives a value of <strong>${targetVal}</strong>?`;
+    inputs = [{ label: 'Term number (n)', id: 'ans_n' }];
+    answer = { n };
+    currentAnswer = { type: 'linear1n', answer };
+  }
+
+  document.getElementById('practiceQuestion').innerHTML = question;
+  const grid = document.getElementById('answerGrid');
+  grid.innerHTML = inputs.map(inp => `
+    <div class="answer-input-group">
+      <label>${inp.label}</label>
+      <input type="number" id="${inp.id}" placeholder="?">
+    </div>
+  `).join('');
+}
+
+function checkAnswer() {
+  if (answered) return;
+  answered = true;
+  practiceTotal++;
+
+  const fb = document.getElementById('feedback');
+  let correct = false;
+
+  if (!currentAnswer) return;
+
+  const { type, answer } = currentAnswer;
+
+  if (type === 'geo2') {
+    const ax = parseInt(document.getElementById('ans_x').value);
+    const ay = parseInt(document.getElementById('ans_y').value);
+    correct = ax === answer.x && ay === answer.y;
+    const xEl = document.getElementById('ans_x');
+    const yEl = document.getElementById('ans_y');
+    xEl.className = ax === answer.x ? 'correct' : 'wrong';
+    yEl.className = ay === answer.y ? 'correct' : 'wrong';
+    if (!correct) {
+      fb.textContent = `Not quite. The correct answer is (${answer.x}, ${answer.y}).`;
+    }
+  } else if (type === 'linear1') {
+    const av = parseInt(document.getElementById('ans_val').value);
+    correct = av === answer.val;
+    document.getElementById('ans_val').className = correct ? 'correct' : 'wrong';
+    if (!correct) fb.textContent = `Not quite. The correct value is ${answer.val}.`;
+  } else if (type === 'linear1n') {
+    const an = parseInt(document.getElementById('ans_n').value);
+    correct = an === answer.n;
+    document.getElementById('ans_n').className = correct ? 'correct' : 'wrong';
+    if (!correct) fb.textContent = `Not quite. The correct term number is ${answer.n}.`;
+  } else if (type === 'linear2') {
+    const am = parseInt(document.getElementById('ans_m').value);
+    const ab = parseInt(document.getElementById('ans_b').value);
+    correct = am === answer.m && ab === answer.b;
+    document.getElementById('ans_m').className = am === answer.m ? 'correct' : 'wrong';
+    document.getElementById('ans_b').className = ab === answer.b ? 'correct' : 'wrong';
+    if (!correct) fb.textContent = `Not quite. m = ${answer.m} and b = ${answer.b}.`;
+  }
+
+  if (correct) {
+    practiceScore++;
+    practiceStreak++;
+    fb.className = 'feedback correct';
+    fb.textContent = practiceStreak >= 3
+      ? `Correct! ${practiceStreak} in a row!`
+      : 'Correct!';
+  } else {
+    practiceStreak = 0;
+    fb.className = 'feedback wrong';
+  }
+
+  document.getElementById('scoreDisplay').textContent = `Score: ${practiceScore} / ${practiceTotal}`;
+  document.getElementById('streakDisplay').textContent = practiceStreak >= 2 ? `Streak: ${practiceStreak}` : '';
+  document.getElementById('nextBtn').style.display = 'block';
+}
+
+// Allow Enter key to submit
+document.addEventListener('keydown', e => {
+  if (e.key === 'Enter' && !answered && document.getElementById('tab-practice').classList.contains('active')) {
+    checkAnswer();
+  }
+});
+
+// ============================================================
+// INIT
+// ============================================================
+updateGeo();
+updateLinear();
+newQuestion();
+
+function updateGeo() {
+  const tx = parseInt(document.getElementById('transX').value) || 0;
+  const ty = parseInt(document.getElementById('transY').value) || 0;
+  const xStr = tx >= 0 ? `x + ${tx}` : `x - ${Math.abs(tx)}`;
+  const yStr = ty >= 0 ? `y + ${ty}` : `y - ${Math.abs(ty)}`;
+  document.getElementById('ruleDisplay').textContent = `(x, y) → (${xStr}, ${yStr})`;
+  drawGeo();
+}
+</script>
+</body>
+</html>
