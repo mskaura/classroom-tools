@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Land Use Decisions - ClassroomTools</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--grn:#2E7D32;--grn2:#4CAF50;--bacc:#66BB6A;--hdg:#1B5E20;--bgl:#F1F8E9;--ebg:#DCEDC8;--mut:#555}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#F9FBF5;color:#1a2e1a;line-height:1.6}
+.topbar{display:flex;align-items:center;gap:1rem;padding:.75rem 1.5rem;background:var(--grn);color:#fff;font-size:.9rem;flex-wrap:wrap}
+.topbar a{color:#C8E6C9;text-decoration:none;font-weight:600}.topbar a:hover{text-decoration:underline}
+.badge{margin-left:auto;background:#1565C0;color:#fff;padding:.3rem .8rem;border-radius:999px;font-size:.75rem;font-weight:700;white-space:nowrap}
+.hero{background:linear-gradient(135deg,#1B5E20,#2E7D32,#388E3C);color:#C8E6C9;padding:2.5rem 1.5rem;text-align:center}
+.hero h1{font-size:clamp(1.6rem,4vw,2.4rem);font-weight:800;margin-bottom:.5rem}
+.hero p{opacity:.9;max-width:600px;margin:0 auto}
+.sim-sec{padding:2rem 1.5rem;max-width:900px;margin:0 auto}
+.sim-title{font-size:1.05rem;font-weight:700;color:var(--hdg);text-align:center;margin-bottom:1.5rem}
+.landscape{width:100%;height:200px;border-radius:16px;overflow:hidden;position:relative;border:2px solid #A5D6A7;margin-bottom:1.5rem;transition:all .5s;background:linear-gradient(180deg,#87CEEB 45%,#228B22 45%)}
+.land-sky{position:absolute;top:0;left:0;right:0;height:45%;background:linear-gradient(180deg,#87CEEB,#B0D9F0);transition:background .5s}
+.land-ground{position:absolute;bottom:0;left:0;right:0;height:57%;transition:background .5s;background:linear-gradient(180deg,#388E3C,#2E7D32)}
+.l-farming .land-ground{background:linear-gradient(180deg,#8BC34A,#558B2F 45%,#8B6914 45%)}
+.l-urban .land-ground{background:linear-gradient(180deg,#90A4AE,#607D8B 40%,#455A64 40%)}
+.l-conservation .land-ground{background:linear-gradient(180deg,#388E3C,#1B5E20 50%,#4E342E 50%)}
+.l-indigenous .land-ground{background:linear-gradient(180deg,#66BB6A,#2E7D32 50%,#5D4037 50%)}
+.scene-icons{position:absolute;bottom:24px;left:0;right:0;text-align:center;font-size:2.2rem;letter-spacing:.5rem;transition:opacity .3s}
+.choices-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:1rem;margin-bottom:1.5rem}
+.choice-btn{background:#fff;border:2px solid #C8E6C9;border-radius:14px;padding:1.1rem;cursor:pointer;text-align:center;transition:all .2s}
+.choice-btn:hover{border-color:var(--grn2);box-shadow:0 4px 16px rgba(46,125,50,.15);transform:translateY(-2px)}
+.choice-btn.selected{border-color:var(--grn);box-shadow:0 0 0 3px rgba(46,125,50,.2)}
+.choice-icon{font-size:1.8rem;margin-bottom:.4rem}
+.choice-label{font-size:.92rem;font-weight:700;color:var(--hdg)}
+.choice-desc{font-size:.78rem;color:var(--mut);margin-top:.25rem}
+.consequence{display:none;background:#fff;border:2px solid var(--bacc);border-radius:14px;padding:1.4rem;margin-top:.5rem;animation:fadeIn .4s}
+.consequence.show{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.cons-text{font-size:.94rem;line-height:1.7;margin-bottom:1rem}
+.impact-tag{display:inline-block;background:var(--bgl);border:1px solid var(--bacc);color:var(--hdg);padding:.3rem .8rem;border-radius:999px;font-size:.8rem;font-weight:700}
+.reflection{background:var(--bgl);border-left:4px solid var(--bacc);padding:1.25rem;border-radius:0 12px 12px 0;margin-top:2rem}
+.reflection h3{font-size:1rem;font-weight:700;color:var(--hdg);margin-bottom:.75rem}
+.rq{margin-bottom:.75rem}
+.rq label{display:block;font-size:.87rem;font-weight:600;color:#333;margin-bottom:.35rem}
+.rq textarea{width:100%;min-height:68px;border:1.5px solid #C8E6C9;border-radius:8px;padding:.55rem;font-size:.86rem;resize:vertical;font-family:inherit}
+.rq textarea:focus{outline:none;border-color:var(--grn)}
+.curric-sec{background:#fff;padding:2rem 1.5rem;border-top:3px solid var(--bacc)}.curric-wrap{max-width:760px;margin:0 auto}
+.ctog{width:100%;background:none;border:2px solid var(--bacc);border-radius:10px;padding:1rem 1.25rem;display:flex;justify-content:space-between;align-items:center;cursor:pointer;font-size:.95rem;font-weight:700;color:var(--hdg);transition:background .2s;text-align:left}
+.ctog:hover{background:var(--bgl)}.cico{transition:transform .3s}.cico.open{transform:rotate(180deg)}
+.cbody{display:none;border:2px solid var(--bacc);border-top:none;border-radius:0 0 10px 10px;padding:1.5rem;background:var(--bgl)}
+.cbody.open{display:block}
+.cgrid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem}
+@media(max-width:500px){.cgrid{grid-template-columns:1fr}}
+.ci label{font-size:.71rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--mut);display:block;margin-bottom:.2rem}
+.ci span{font-size:.92rem;font-weight:600}
+.cexp{background:var(--ebg);border-left:4px solid var(--bacc);padding:.8rem 1rem;border-radius:0 8px 8px 0;margin-top:.8rem}
+.cexp .ecode{font-weight:800;color:var(--hdg);font-size:.87rem}.cexp .etxt{font-size:.87rem;margin-top:.2rem}
+.chow{margin-top:.9rem;font-size:.87rem;color:#555;line-height:1.65;padding:.7rem;background:rgba(0,0,0,.03);border-radius:8px}
+.chow strong{color:#222}
+footer{background:#1B5E20;color:rgba(255,255,255,.6);text-align:center;padding:1.2rem;font-size:.81rem}
+footer strong{color:#fff}
+</style></head><body>
+<div class="topbar"><a href="../">&larr; Back to Classroom Tools</a>
+<span class="badge">&#127807; Grade 7 &middot; Geography &middot; Human-Environment Interactions</span></div>
+<div class="hero"><h1>&#127758; Land Use Decisions</h1>
+<p>How do humans use the land &mdash; and what are the consequences? Explore four different land use choices and see what happens to the environment.</p></div>
+<section class="sim-sec">
+<p class="sim-title">Choose a land use approach and observe the environmental consequences:</p>
+<div class="landscape" id="scene">
+<div class="land-sky" id="sky"></div>
+<div class="land-ground" id="ground"></div>
+<div class="scene-icons" id="sicons">&#127795;&#127795;&#127807;&#127795;&#127795;</div>
+</div>
+<div class="choices-grid">
+<div class="choice-btn" id="btn-farming" onclick="selectChoice('farming')">
+<div class="choice-icon">&#127807;</div><div class="choice-label">Farming</div>
+<div class="choice-desc">Convert land to intensive crop farming for food and profit.</div></div>
+<div class="choice-btn" id="btn-urban" onclick="selectChoice('urban')">
+<div class="choice-icon">&#127981;</div><div class="choice-label">Urban Development</div>
+<div class="choice-desc">Build housing, roads, and commercial districts on undeveloped land.</div></div>
+<div class="choice-btn" id="btn-conservation" onclick="selectChoice('conservation')">
+<div class="choice-icon">&#127807;&#65039;</div><div class="choice-label">Conservation</div>
+<div class="choice-desc">Protect land as a nature reserve or wildlife corridor.</div></div>
+<div class="choice-btn" id="btn-indigenous" onclick="selectChoice('indigenous')">
+<div class="choice-icon">&#127966;</div><div class="choice-label">Indigenous Stewardship</div>
+<div class="choice-desc">Return land to Indigenous management using traditional practices.</div></div>
+</div>
+<div class="consequence" id="cons">
+<div class="cons-text" id="cons-text"></div>
+<span class="impact-tag" id="imp-tag"></span>
+</div>
+<div class="reflection">
+<h3>&#128161; Reflection Questions</h3>
+<div class="rq"><label>1. Who benefits most from the land use choice you selected? Who might be negatively affected?</label>
+<textarea placeholder="Write your thoughts here..."></textarea></div>
+<div class="rq"><label>2. How might this land use decision look different in 50 years?</label>
+<textarea placeholder="Write your thoughts here..."></textarea></div>
+<div class="rq"><label>3. Is there a way to meet human needs while also protecting the environment? What would that look like?</label>
+<textarea placeholder="Write your thoughts here..."></textarea></div>
+</div>
+</section>
+<section class="curric-sec"><div class="curric-wrap">
+<button class="ctog" id="ctog" onclick="toggleCurric()">
+<span>&#128203; Curriculum Connection &mdash; for Teachers</span><span class="cico" id="cico">&#9660;</span></button>
+<div class="cbody" id="cbody">
+<div class="cgrid">
+<div class="ci"><label>Subject &amp; Grade</label><span>Grade 7 &mdash; Geography</span></div>
+<div class="ci"><label>Strand</label><span>Interactions in the Physical Environment</span></div>
+</div>
+<div class="cexp"><div class="ecode">B3.3 &mdash; Human Impact on Natural Systems</div>
+<div class="etxt">Analyse the effects of various human activities on the natural environment in Canada and explain the concept of sustainability in this context.</div></div>
+<div class="cexp" style="margin-top:.6rem"><div class="ecode">B2.4 &mdash; Land Use and Resource Management</div>
+<div class="etxt">Explain how land use decisions by governments, corporations, and communities affect both people and the natural environment, with consideration for Indigenous land management practices.</div></div>
+<div class="chow"><strong>How this tool addresses it:</strong> Students make land use decisions and immediately see visual and textual consequences, connecting choices to environmental and social outcomes. The reflection prompts extend thinking beyond the simulation, encouraging higher-order reasoning about sustainability, equity, and Indigenous land relationships.</div>
+</div></div></section>
+<footer><strong>ClassroomTools</strong> &middot; Land Use Decisions &middot; Grade 7 Geography</footer>
+<script>
+const CD={"farming": {"cls": "l-farming", "icons": "&#127807;&#127807;&#128650;&#128650;&#127807;", "text": "<b>Farming:</b> Food security increases and the local economy grows, but native habitat is cleared. Soil degrades over time with monoculture practices, and chemical runoff affects nearby waterways. Wildlife corridors are broken, reducing biodiversity.", "impact": "Medium environmental impact | High food security benefit"}, "urban": {"cls": "l-urban", "icons": "&#127981;&#127963;&#127981;&#127963;&#128668;", "text": "<b>Urban Development:</b> Growing population gets housing and jobs. But wetlands may be drained, impervious surfaces increase flooding risk, and habitat is permanently lost. Urban heat island effects intensify and greenspace shrinks.", "impact": "High environmental impact | High short-term economic benefit"}, "conservation": {"cls": "l-conservation", "icons": "&#127795;&#127795;&#128007;&#127795;&#127795;", "text": "<b>Conservation:</b> Biodiversity thrives. Carbon is sequestered in trees and soil. Clean water is filtered naturally. Local ecotourism may bring economic benefit. However, no agricultural or housing use is possible, which requires careful community planning.", "impact": "Minimal environmental impact | High long-term ecological benefit"}, "indigenous": {"cls": "l-indigenous", "icons": "&#127806;&#128007;&#127806;&#128038;&#127806;", "text": "<b>Indigenous Stewardship:</b> Traditional burning regimes reduce catastrophic wildfire risk. Medicinal plants recover. Fish populations increase as riparian zones are restored. Cultural knowledge is preserved and ecological relationships are honoured.", "impact": "Minimal environmental impact | High cultural and ecological benefit"}};
+function selectChoice(id){
+  document.querySelectorAll('.choice-btn').forEach(b=>b.classList.remove('selected'));
+  document.getElementById('btn-'+id).classList.add('selected');
+  const d=CD[id];
+  const scene=document.getElementById('scene');
+  scene.className='landscape '+d.cls;
+  document.getElementById('sicons').innerHTML=d.icons;
+  document.getElementById('cons-text').innerHTML=d.text;
+  document.getElementById('imp-tag').textContent=d.impact;
+  document.getElementById('cons').classList.add('show');
+}
+function toggleCurric(){
+  document.getElementById('cbody').classList.toggle('open');
+  document.getElementById('cico').classList.toggle('open');
+}
+</script></body></html>

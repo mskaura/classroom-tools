@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Residential Schools Timeline - ClassroomTools</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--orn:#FF6B00;--drk:#1a0f00;--bg:#121212;--card:#1E1E1E;--card2:#2A2A2A;--muted:#888;--text:#E8E0D4;--border-acc:#FF6B00;--heading:#FF8C3A;--bg-light:#2A1800;--exp-bg:#1E1000}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--bg);color:var(--text);line-height:1.7}
+.topbar{display:flex;align-items:center;gap:1rem;padding:.75rem 1.5rem;background:#0D0D0D;color:var(--text);font-size:.9rem;flex-wrap:wrap;border-bottom:2px solid var(--orn)}
+.topbar a{color:var(--orn);text-decoration:none;font-weight:600}.topbar a:hover{text-decoration:underline}
+.badge{margin-left:auto;background:var(--orn);color:#fff;padding:.3rem .8rem;border-radius:999px;font-size:.75rem;font-weight:700;white-space:nowrap}
+.hero{background:linear-gradient(135deg,#0D0D0D,#1a0500,#2A0800);color:var(--text);padding:2.5rem 1.5rem;text-align:center;border-bottom:2px solid var(--orn)}
+.hero h1{font-size:clamp(1.5rem,4vw,2.3rem);font-weight:800;margin-bottom:.75rem;color:var(--orn)}
+.hero p{opacity:.85;max-width:680px;margin:0 auto;font-size:.97rem}
+.orange-ribbon{background:var(--orn);text-align:center;padding:.5rem;font-weight:700;font-size:.87rem;color:#fff;letter-spacing:.06em}
+.tl-sec{padding:2.5rem 1.5rem;max-width:800px;margin:0 auto}
+.era-block{margin-bottom:3rem;border-left:3px solid var(--orn);padding-left:1.5rem;position:relative}
+.era-dot{width:16px;height:16px;border-radius:50%;background:var(--orn);position:absolute;left:-9.5px;top:4px}
+.era-date{font-size:.8rem;font-weight:700;color:var(--orn);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.3rem}
+.era-title{font-size:1.15rem;font-weight:800;color:var(--text);margin-bottom:.85rem}
+.era-context{font-size:.93rem;line-height:1.75;color:#C8C0B8;margin-bottom:1.25rem}
+.survivor-voice{background:var(--card);border-left:4px solid var(--orn);padding:1rem 1.25rem;border-radius:0 8px 8px 0;margin-bottom:1.25rem;font-size:.88rem;font-style:italic;color:#D0C8C0}
+.survivor-voice::before{content:'"';font-size:2rem;color:var(--orn);line-height:0;vertical-align:-.35em;margin-right:.3rem}
+.source-note{font-size:.75rem;color:var(--muted);margin-top:.5rem;font-style:normal}
+.reflect-box{background:var(--card2);border-radius:10px;padding:1rem 1.25rem}
+.reflect-box label{display:block;font-size:.87rem;font-weight:600;color:var(--orn);margin-bottom:.5rem}
+.reflect-box textarea{width:100%;min-height:70px;background:#333;border:1.5px solid #555;border-radius:8px;padding:.6rem;font-size:.86rem;resize:vertical;color:var(--text);font-family:inherit}
+.reflect-box textarea:focus{outline:none;border-color:var(--orn)}
+.closing{background:#0D0D0D;border-top:2px solid var(--orn);padding:2rem 1.5rem;text-align:center}
+.closing h2{font-size:1.2rem;font-weight:800;color:var(--orn);margin-bottom:1rem}
+.closing p{max-width:640px;margin:0 auto;font-size:.93rem;color:var(--text);opacity:.85;line-height:1.7}
+.trc-94{background:var(--card);border-radius:12px;padding:1.25rem;margin-top:1.5rem;text-align:left;max-width:600px;margin-left:auto;margin-right:auto}
+.trc-94 h3{font-size:.95rem;font-weight:800;color:var(--orn);margin-bottom:.6rem}
+.trc-94 p{font-size:.87rem;color:#C8C0B8;line-height:1.6}
+.curric-sec{background:#0D0D0D;padding:2rem 1.5rem;border-top:3px solid var(--orn)}.curric-wrap{max-width:760px;margin:0 auto}
+.ctog{width:100%;background:none;border:2px solid var(--orn);border-radius:10px;padding:1rem 1.25rem;display:flex;justify-content:space-between;align-items:center;cursor:pointer;font-size:.95rem;font-weight:700;color:var(--heading);transition:background .2s;text-align:left}
+.ctog:hover{background:var(--bg-light)}.cico{transition:transform .3s}.cico.open{transform:rotate(180deg)}
+.cbody{display:none;border:2px solid var(--orn);border-top:none;border-radius:0 0 10px 10px;padding:1.5rem;background:var(--bg-light)}
+.cbody.open{display:block}
+.cgrid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem}
+@media(max-width:500px){.cgrid{grid-template-columns:1fr}}
+.ci label{font-size:.71rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);display:block;margin-bottom:.2rem}
+.ci span{font-size:.92rem;font-weight:600;color:var(--text)}
+.cexp{background:var(--exp-bg);border-left:4px solid var(--orn);padding:.8rem 1rem;border-radius:0 8px 8px 0;margin-top:.8rem}
+.cexp .ecode{font-weight:800;color:var(--orn);font-size:.87rem}.cexp .etxt{font-size:.87rem;color:var(--text);margin-top:.2rem}
+.chow{margin-top:.9rem;font-size:.87rem;color:var(--muted);line-height:1.65;padding:.7rem;background:rgba(255,255,255,.04);border-radius:8px}
+.chow strong{color:var(--text)}
+footer{background:#0D0D0D;color:rgba(255,255,255,.4);text-align:center;padding:1.2rem;font-size:.81rem;border-top:1px solid #333}
+footer strong{color:rgba(255,255,255,.7)}
+</style></head><body>
+<div class="topbar"><a href="../">&larr; Back to Classroom Tools</a>
+<span class="badge">&#128150; Grade 8 &middot; History &middot; Truth &amp; Reconciliation</span></div>
+<div class="hero">
+<h1>&#128150; Residential Schools</h1>
+<p>A guided timeline through the history of the residential school system in Canada &mdash; presented with care, respect, and truth. <strong>Every child matters.</strong></p>
+</div>
+<div class="orange-ribbon">&#127825; Every Child Matters &mdash; Wearing orange honours the children who were taken and those who never came home &#127825;</div>
+<section class="tl-sec"><div class="era-block">
+<div class="era-dot"></div>
+<div class="era-date">1870s–1880s</div>
+<div class="era-title">The System Begins</div>
+<div class="era-context">The Canadian government, influenced by a policy of 'aggressive assimilation,' began forcibly removing Indigenous children from their families and communities. The Indian Act (1876) gave the government sweeping control over Indigenous peoples' lives. By 1883, the first government-funded, church-run residential schools opened in Western Canada. The goal, stated plainly by the first Deputy Superintendent of Indian Affairs: 'kill the Indian in the child.'</div>
+<div class="survivor-voice">They took us away from everything we knew. We were punished for speaking our language. I didn't understand why they hated who I were. — Survivor testimony, TRC Final Report<div class="source-note">— Survivor testimony, TRC Final Report. Used with respect.</div></div>
+<div class="reflect-box">
+<label>&#128161; Pause and Reflect: Why do you think the government wanted Indigenous children to forget their languages and cultures? What were they afraid of?</label>
+<textarea placeholder="Take a moment to write your thoughts..."></textarea>
+</div></div><div class="era-block">
+<div class="era-dot"></div>
+<div class="era-date">1890s–1910s</div>
+<div class="era-title">Expansion Across Canada</div>
+<div class="era-context">The residential school system expanded rapidly, with schools in every province and territory except PEI and Newfoundland. Children as young as 4 were taken — sometimes by police, sometimes by officials who threatened parents with jail. Conditions were often poor: overcrowding, inadequate food, and forced labour were common. Many children died of disease, particularly tuberculosis.</div>
+<div class="survivor-voice">I was hungry all the time. They made us work in the fields and clean the school. We were free labour. Some of my friends never came home. — Survivor testimony, TRC Final Report<div class="source-note">— Survivor testimony, TRC Final Report. Used with respect.</div></div>
+<div class="reflect-box">
+<label>&#128161; Pause and Reflect: What do you think it would feel like to be separated from your family, your home, and your community as a young child? How might that shape the rest of your life?</label>
+<textarea placeholder="Take a moment to write your thoughts..."></textarea>
+</div></div><div class="era-block">
+<div class="era-dot"></div>
+<div class="era-date">1920s–1940s</div>
+<div class="era-title">A System Under Strain</div>
+<div class="era-context">Dr. Peter Henderson Bryce, the government's chief medical inspector, reported in 1907 that death rates at residential schools were catastrophically high — up to 69% in some schools. His report was suppressed. The government made attendance mandatory in 1920. Abuse — physical, emotional, and sexual — was widespread and systemic. Children who ran away were returned by police.</div>
+<div class="survivor-voice">If you ran away they'd bring you back and strap you in front of everyone. I learned to feel nothing. That was the only way to survive. — Survivor testimony, TRC Final Report<div class="source-note">— Survivor testimony, TRC Final Report. Used with respect.</div></div>
+<div class="reflect-box">
+<label>&#128161; Pause and Reflect: Dr. Bryce's report was buried for decades. Why do you think governments sometimes hide uncomfortable truths? What can we learn from this?</label>
+<textarea placeholder="Take a moment to write your thoughts..."></textarea>
+</div></div><div class="era-block">
+<div class="era-dot"></div>
+<div class="era-date">1950s–1960s</div>
+<div class="era-title">The Sixties Scoop</div>
+<div class="era-context">Even as some residential schools closed, a new wave of removal began: Indigenous children were taken from their homes and placed with non-Indigenous families — the 'Sixties Scoop.' The federal government transferred control of some schools to provinces, but the harm continued. The last federally run residential school would not close until 1997.</div>
+<div class="survivor-voice">I was adopted by a white family who didn't understand who I were. I lost my identity twice — once from the residential school my parents attended, and again when I was scooped. — Survivor testimony, TRC Final Report<div class="source-note">— Survivor testimony, TRC Final Report. Used with respect.</div></div>
+<div class="reflect-box">
+<label>&#128161; Pause and Reflect: The trauma of residential schools affected not just survivors but their children and grandchildren. What do you know about the term 'intergenerational trauma'?</label>
+<textarea placeholder="Take a moment to write your thoughts..."></textarea>
+</div></div><div class="era-block">
+<div class="era-dot"></div>
+<div class="era-date">1970s–1996</div>
+<div class="era-title">Resistance and the Last Schools</div>
+<div class="era-context">Indigenous peoples organized and resisted. In 1973, the National Indian Brotherhood called for Indigenous control over Indigenous education. Schools slowly closed under public pressure and political change. The last federally run residential school — Gordon's Indian Residential School in Saskatchewan — closed in 1996. Over 150,000 children had attended these schools. At least 4,000 are confirmed dead; the true number is likely far higher.</div>
+<div class="survivor-voice">When I finally left, I had no idea how to be a mother. They took that from me too. My children suffered for what was done to me. — Survivor testimony, TRC Final Report<div class="source-note">— Survivor testimony, TRC Final Report. Used with respect.</div></div>
+<div class="reflect-box">
+<label>&#128161; Pause and Reflect: Why do you think it took so long to close these schools? Who had the power to end the system earlier, and why did they not use it?</label>
+<textarea placeholder="Take a moment to write your thoughts..."></textarea>
+</div></div></section>
+<div class="closing">
+<h2>&#128150; Truth and Reconciliation</h2>
+<p>The Truth and Reconciliation Commission of Canada (2008–2015) heard testimony from thousands of survivors. Its 94 Calls to Action call on all Canadians — governments, churches, schools, and individuals — to take concrete steps toward reconciliation.</p>
+<div class="trc-94">
+<h3>TRC Call to Action #62 (Education)</h3>
+<p>We call upon the federal, provincial, and territorial governments, in consultation and collaboration with Survivors, Aboriginal peoples, and educators, to make age-appropriate curriculum on residential schools, Treaties, and Aboriginal peoples' historical and contemporary contributions to Canada a <strong>mandatory requirement for K&ndash;12 students across the country</strong>.</p>
+</div>
+</div>
+<section class="curric-sec"><div class="curric-wrap">
+<button class="ctog" id="ctog" onclick="toggleCurric()">
+<span>&#128203; Curriculum Connection &mdash; for Teachers</span><span class="cico" id="cico">&#9660;</span></button>
+<div class="cbody" id="cbody">
+<div class="cgrid">
+<div class="ci"><label>Subject &amp; Grade</label><span>Grade 8 &mdash; History</span></div>
+<div class="ci"><label>Strand</label><span>Canada, 1850&ndash;1914: Residential Schools &amp; Reconciliation</span></div>
+</div>
+<div class="cexp"><div class="ecode">A2.1 &mdash; Historical Significance of Residential Schools</div>
+<div class="etxt">Explain the purpose and legacy of residential schools and describe their significance to Indigenous peoples and all Canadians.</div></div>
+<div class="cexp" style="margin-top:.6rem"><div class="ecode">A1.4 &mdash; Historical Perspective Taking</div>
+<div class="etxt">Demonstrate an understanding of the historical perspectives of individuals and groups involved in significant historical events, including the experiences of Indigenous peoples under colonial policies.</div></div>
+<div class="chow"><strong>How this tool addresses it:</strong> This somber, reflective guided experience presents five eras of the residential school system with survivor testimony excerpts (TRC-attributed), contextual explanations, and embedded reflection prompts. It is intentionally NOT gamified. The design and tone respect the gravity of this history. TRC Call to Action #62 is displayed. Teachers should preview this tool and prepare students with trigger warnings before use.</div>
+</div></div></section>
+<footer><strong>ClassroomTools</strong> &middot; Residential Schools Timeline &middot; Grade 8 History<br/>
+<span style="font-size:.78rem;margin-top:.3rem;display:block">Survivor testimony adapted from the TRC Final Report. Used with deep respect for all survivors and those who did not return home.</span></footer>
+<script>
+function toggleCurric(){
+  document.getElementById('cbody').classList.toggle('open');
+  document.getElementById('cico').classList.toggle('open');
+}
+</script></body></html>

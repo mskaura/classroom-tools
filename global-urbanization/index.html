@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Global Urbanization - ClassroomTools</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--teal:#0D7377;--teal2:#14A085;--blue:#1565C0;--dark:#0A1628;--lt:#F0F8FF;--border-acc:#4DD0E1;--heading:#0D7377;--bg-light:#E0F7FA;--exp-bg:#B2EBF2;--mut:#666}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--lt);color:var(--dark);line-height:1.6}
+.topbar{display:flex;align-items:center;gap:1rem;padding:.75rem 1.5rem;background:var(--dark);color:#fff;font-size:.9rem;flex-wrap:wrap}
+.topbar a{color:#80DEEA;text-decoration:none;font-weight:600}.topbar a:hover{text-decoration:underline}
+.badge{margin-left:auto;background:var(--teal);color:#fff;padding:.3rem .8rem;border-radius:999px;font-size:.75rem;font-weight:700;white-space:nowrap}
+.hero{background:linear-gradient(135deg,#0A1628,#0D4A6B,#0D7377);color:#B2EBF2;padding:2.5rem 1.5rem;text-align:center}
+.hero h1{font-size:clamp(1.6rem,4vw,2.4rem);font-weight:800;margin-bottom:.5rem}
+.hero p{opacity:.9;max-width:600px;margin:0 auto}
+.viz-sec{padding:2rem 1.5rem;max-width:960px;margin:0 auto}
+.viz-grid{display:grid;grid-template-columns:1fr 300px;gap:1.5rem;align-items:start}
+@media(max-width:680px){.viz-grid{grid-template-columns:1fr}}
+.map-box{background:var(--dark);border-radius:14px;padding:1.25rem;position:relative}
+.map-title{color:#80DEEA;font-size:.85rem;font-weight:700;margin-bottom:1rem;text-align:center}
+.world-svg{width:100%;height:auto}
+.slider-row{display:flex;align-items:center;gap:1rem;margin-top:1rem}
+.slider-row label{color:#80DEEA;font-size:.85rem;font-weight:700;white-space:nowrap}
+#yr-slider{flex:1;accent-color:var(--teal2)}
+#yr-display{color:var(--teal2);font-size:1.1rem;font-weight:800;min-width:48px}
+.stats-panel{display:flex;flex-direction:column;gap:1rem}
+.stat-card{background:#fff;border:1.5px solid var(--border-acc);border-radius:12px;padding:1.1rem}
+.stat-card h3{font-size:.78rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--mut);margin-bottom:.4rem}
+.stat-val{font-size:1.8rem;font-weight:800;color:var(--teal);line-height:1}
+.stat-sub{font-size:.78rem;color:var(--mut);margin-top:.2rem}
+.bar-chart{margin-top:1rem}
+.bar-row{display:flex;align-items:center;gap:.5rem;margin-bottom:.4rem}
+.bar-label{font-size:.72rem;font-weight:700;color:var(--dark);min-width:50px}
+.bar-bg{flex:1;background:#e0f7fa;border-radius:4px;height:14px;overflow:hidden}
+.bar-fill{height:100%;background:linear-gradient(90deg,var(--teal),var(--teal2));border-radius:4px;transition:width .6s ease}
+.bar-pct{font-size:.7rem;color:var(--mut);min-width:30px;text-align:right}
+.fact-card{background:#fff;border:1.5px solid var(--border-acc);border-radius:12px;padding:1.1rem;margin-top:.8rem}
+.fact-card h3{font-size:.78rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--mut);margin-bottom:.5rem}
+.fact-text{font-size:.87rem;line-height:1.6;color:var(--dark)}
+.push-pull{display:grid;grid-template-columns:1fr 1fr;gap:.75rem;margin-top:.75rem}
+.pp-card{border-radius:8px;padding:.75rem}
+.pp-card.push{background:#FFF3E0;border:1px solid #FFCC80}
+.pp-card.pull{background:#E8F5E9;border:1px solid #A5D6A7}
+.pp-card h4{font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin-bottom:.4rem}
+.pp-card.push h4{color:#E65100}
+.pp-card.pull h4{color:#2E7D32}
+.pp-card p{font-size:.78rem;color:#555;line-height:1.5}
+.quiz-sec{background:var(--bg-light);padding:2.5rem 1.5rem}.quiz-wrap{max-width:680px;margin:0 auto}
+.quiz-sec h2{font-size:1.35rem;font-weight:800;color:var(--heading);text-align:center;margin-bottom:.2rem}
+.quiz-sec .sub{text-align:center;color:var(--mut);font-size:.88rem;margin-bottom:1.75rem}
+.qc{background:#fff;border:1.5px solid var(--border-acc);border-radius:12px;padding:1.35rem;margin-bottom:1rem}
+.qn{font-size:.71rem;font-weight:700;color:var(--teal2);text-transform:uppercase;letter-spacing:.06em;margin-bottom:.3rem}
+.qt{font-size:.96rem;font-weight:600;margin-bottom:.85rem}.qopts{display:grid;gap:.4rem}
+.qo{background:var(--bg-light);border:1.5px solid var(--border-acc);border-radius:7px;padding:.55rem .9rem;font-size:.87rem;cursor:pointer;text-align:left;transition:all .2s;color:var(--dark);width:100%}
+.qo:hover:not(:disabled){background:#B2EBF2;border-color:var(--teal)}
+.qo.correct{background:#d1fae5;border-color:#10b981;color:#065f46}
+.qo.wrong{background:#fee2e2;border-color:#ef4444;color:#991b1b}
+.qo:disabled{cursor:default}
+.qfb{font-size:.83rem;margin-top:.6rem;padding:.5rem .8rem;border-radius:7px;display:none}
+.qfb.show{display:block}.qfb.correct{background:#d1fae5;color:#065f46}.qfb.wrong{background:#fee2e2;color:#991b1b}
+.qresult{text-align:center;background:#fff;border:2px solid var(--border-acc);border-radius:12px;padding:1.75rem;margin-top:1rem;display:none}
+.qresult h3{font-size:1.3rem;font-weight:800;color:var(--teal)}.qresult .sc{font-size:2.8rem;font-weight:800;color:var(--teal2);margin:.4rem 0}
+.btn{background:var(--teal);color:#fff;border:none;padding:.7rem 1.6rem;border-radius:8px;font-size:.92rem;font-weight:700;cursor:pointer;margin-top:.9rem;transition:background .2s}
+.btn:hover{background:var(--teal2)}
+.curric-sec{background:#fff;padding:2rem 1.5rem;border-top:3px solid var(--border-acc)}.curric-wrap{max-width:760px;margin:0 auto}
+.ctog{width:100%;background:none;border:2px solid var(--border-acc);border-radius:10px;padding:1rem 1.25rem;display:flex;justify-content:space-between;align-items:center;cursor:pointer;font-size:.95rem;font-weight:700;color:var(--heading);transition:background .2s;text-align:left}
+.ctog:hover{background:var(--bg-light)}.cico{transition:transform .3s}.cico.open{transform:rotate(180deg)}
+.cbody{display:none;border:2px solid var(--border-acc);border-top:none;border-radius:0 0 10px 10px;padding:1.5rem;background:var(--bg-light)}
+.cbody.open{display:block}
+.cgrid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem}
+@media(max-width:500px){.cgrid{grid-template-columns:1fr}}
+.ci label{font-size:.71rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--mut);display:block;margin-bottom:.2rem}
+.ci span{font-size:.92rem;font-weight:600}
+.cexp{background:var(--exp-bg);border-left:4px solid var(--border-acc);padding:.8rem 1rem;border-radius:0 8px 8px 0;margin-top:.8rem}
+.cexp .ecode{font-weight:800;color:var(--heading);font-size:.87rem}.cexp .etxt{font-size:.87rem;margin-top:.2rem}
+.chow{margin-top:.9rem;font-size:.87rem;color:#555;line-height:1.65;padding:.7rem;background:rgba(0,0,0,.03);border-radius:8px}
+.chow strong{color:#222}
+footer{background:var(--dark);color:rgba(255,255,255,.5);text-align:center;padding:1.2rem;font-size:.81rem}
+footer strong{color:rgba(255,255,255,.8)}
+</style></head><body>
+<div class="topbar"><a href="../">&larr; Back to Classroom Tools</a>
+<span class="badge">&#127759; Grade 8 &middot; Geography &middot; Global Settlement Patterns &amp; Urbanization</span></div>
+<div class="hero"><h1>&#127759; Global Urbanization 1900&ndash;2020</h1>
+<p>Watch humanity move to cities over 120 years. Explore the data, discover push and pull factors, and understand how urbanization is reshaping our world.</p></div>
+<section class="viz-sec">
+<div class="viz-grid">
+<div class="map-box">
+<div class="map-title">Urban Population % by Region</div>
+<svg class="world-svg" viewBox="0 0 600 320" xmlns="http://www.w3.org/2000/svg">
+<!-- Simplified world regions as coloured blobs -->
+<rect x="10" y="80" width="100" height="120" rx="12" id="reg-NA" fill="#0D7377" opacity=".7"/>
+<text x="60" y="138" text-anchor="middle" font-size="11" fill="#fff" font-weight="bold">North</text>
+<text x="60" y="152" text-anchor="middle" font-size="11" fill="#fff" font-weight="bold">America</text>
+<text x="60" y="168" text-anchor="middle" font-size="13" fill="#80DEEA" font-weight="bold" id="lbl-NA">40%</text>
+<rect x="130" y="60" width="110" height="110" rx="12" id="reg-EU" fill="#1565C0" opacity=".7"/>
+<text x="185" y="112" text-anchor="middle" font-size="11" fill="#fff" font-weight="bold">Europe</text>
+<text x="185" y="130" text-anchor="middle" font-size="13" fill="#90CAF9" font-weight="bold" id="lbl-EU">35%</text>
+<rect x="300" y="55" width="160" height="140" rx="12" id="reg-Asia" fill="#00695C" opacity=".7"/>
+<text x="380" y="115" text-anchor="middle" font-size="11" fill="#fff" font-weight="bold">Asia</text>
+<text x="380" y="133" text-anchor="middle" font-size="13" fill="#80CBC4" font-weight="bold" id="lbl-Asia">8%</text>
+<rect x="180" y="185" width="110" height="90" rx="12" id="reg-Africa" fill="#827717" opacity=".7"/>
+<text x="235" y="228" text-anchor="middle" font-size="11" fill="#fff" font-weight="bold">Africa</text>
+<text x="235" y="246" text-anchor="middle" font-size="13" fill="#F9A825" font-weight="bold" id="lbl-Africa">5%</text>
+<rect x="30" y="210" width="90" height="80" rx="12" id="reg-SAm" fill="#4A148C" opacity=".7"/>
+<text x="75" y="248" text-anchor="middle" font-size="11" fill="#fff" font-weight="bold">S. America</text>
+<text x="75" y="266" text-anchor="middle" font-size="13" fill="#E1BEE7" font-weight="bold" id="lbl-SAm">10%</text>
+<!-- Big circle showing global % -->
+<circle cx="520" cy="160" r="70" fill="#0D4A6B" opacity=".8"/>
+<text x="520" y="152" text-anchor="middle" font-size="13" fill="#B2EBF2">Global Urban</text>
+<text x="520" y="173" text-anchor="middle" font-size="24" fill="#4DD0E1" font-weight="800" id="lbl-global">14%</text>
+<text x="520" y="192" text-anchor="middle" font-size="10" fill="#80DEEA" id="lbl-pop">220M urban</text>
+</svg>
+<div class="slider-row">
+<label>Year:</label>
+<input type="range" id="yr-slider" min="0" max="4" step="1" value="0"/>
+<span id="yr-display">1900</span>
+</div>
+</div>
+<div class="stats-panel">
+<div class="stat-card">
+<h3>Urban Population</h3>
+<div class="stat-val" id="stat-urban">220M</div>
+<div class="stat-sub" id="stat-world">of 1.6B total</div>
+</div>
+<div class="fact-card">
+<h3>Era Context</h3>
+<div class="fact-text" id="fact-text">In 1900, only London and New York had populations over 1 million. Most people lived and worked on farms.</div>
+</div>
+<div class="push-pull">
+<div class="pp-card push"><h4>&#128517; Push Factors</h4><p id="push-text">Rural poverty, crop failures, landlord exploitation</p></div>
+<div class="pp-card pull"><h4>&#10024; Pull Factors</h4><p id="pull-text">Factory jobs, higher wages, urban opportunities</p></div>
+</div>
+</div>
+</div>
+</section>
+<section class="quiz-sec"><div class="quiz-wrap">
+<h2>&#127759; Knowledge Check</h2><p class="sub">Four questions on global urbanization patterns.</p>
+<div id="qa"><div class="qc"><div class="qn">Question 1 of 4</div><div class="qt">What percentage of the global population was urban in 1900?</div><div class="qopts"><button class="qo" data-correct="false" onclick="handleQ(this,0)">5%</button><button class="qo" data-correct="true" onclick="handleQ(this,0)">14%</button><button class="qo" data-correct="false" onclick="handleQ(this,0)">30%</button><button class="qo" data-correct="false" onclick="handleQ(this,0)">50%</button></div><div class="qfb" id="qfb0"></div></div><div class="qc"><div class="qn">Question 2 of 4</div><div class="qt">Which region urbanized fastest between 1900 and 1950?</div><div class="qopts"><button class="qo" data-correct="false" onclick="handleQ(this,1)">Africa</button><button class="qo" data-correct="false" onclick="handleQ(this,1)">Asia</button><button class="qo" data-correct="true" onclick="handleQ(this,1)">North America</button><button class="qo" data-correct="false" onclick="handleQ(this,1)">South America</button></div><div class="qfb" id="qfb1"></div></div><div class="qc"><div class="qn">Question 3 of 4</div><div class="qt">As of 2020, approximately what percentage of the global population lives in cities?</div><div class="qopts"><button class="qo" data-correct="false" onclick="handleQ(this,2)">35%</button><button class="qo" data-correct="false" onclick="handleQ(this,2)">42%</button><button class="qo" data-correct="true" onclick="handleQ(this,2)">56%</button><button class="qo" data-correct="false" onclick="handleQ(this,2)">70%</button></div><div class="qfb" id="qfb2"></div></div><div class="qc"><div class="qn">Question 4 of 4</div><div class="qt">What is a 'pull factor' in migration?</div><div class="qopts"><button class="qo" data-correct="false" onclick="handleQ(this,3)">A reason to leave a place</button><button class="qo" data-correct="false" onclick="handleQ(this,3)">A government policy restricting movement</button><button class="qo" data-correct="true" onclick="handleQ(this,3)">Something that attracts people to a new place</button><button class="qo" data-correct="false" onclick="handleQ(this,3)">A natural disaster that forces people to move</button></div><div class="qfb" id="qfb3"></div></div></div>
+<div class="qresult" id="qres"><h3>Quiz Complete! &#127759;</h3><div class="sc" id="qs"></div><p id="qm"></p>
+<button class="btn" onclick="resetQuiz()">Try Again</button></div></div></section>
+<section class="curric-sec"><div class="curric-wrap">
+<button class="ctog" id="ctog" onclick="toggleCurric()">
+<span>&#128203; Curriculum Connection &mdash; for Teachers</span><span class="cico" id="cico">&#9660;</span></button>
+<div class="cbody" id="cbody">
+<div class="cgrid">
+<div class="ci"><label>Subject &amp; Grade</label><span>Grade 8 &mdash; Geography</span></div>
+<div class="ci"><label>Strand</label><span>Global Settlement Patterns &amp; Urbanization</span></div>
+</div>
+<div class="cexp"><div class="ecode">B2.2 &mdash; Global Urbanization Trends</div>
+<div class="etxt">Describe patterns and trends in urbanization globally and explain factors that have contributed to the growth of cities in different regions of the world.</div></div>
+<div class="cexp" style="margin-top:.6rem"><div class="ecode">B1.3 &mdash; Push and Pull Factors in Migration</div>
+<div class="etxt">Explain the push and pull factors that contribute to population movement from rural to urban areas, with reference to specific world regions and time periods.</div></div>
+<div class="chow"><strong>How this tool addresses it:</strong> Students use a slider to explore urbanization data across five decades (1900–2020), watching regional bars update in real time. Push/pull factor cards update for each era. The visualization builds intuitive understanding of global urbanization trends required by the Grade 8 Geography curriculum, making abstract data concrete and interactive.</div>
+</div></div></section>
+<footer><strong>ClassroomTools</strong> &middot; Global Urbanization &middot; Grade 8 Geography<br/>
+<span style="font-size:.78rem;margin-top:.3rem;display:block">Data based on UN World Urbanization Prospects and World Bank estimates.</span></footer>
+<script>
+const D={"1900": {"pct": 14, "urban_pop": "220M", "world_pop": "1.6B", "regions": {"NA": 40, "EU": 35, "Asia": 8, "Africa": 5, "SAm": 10}, "fact": "In 1900, only London and New York had populations over 1 million. Most people lived and worked on farms. Cities were dense, often overcrowded, and industrial pollution was a serious health problem.", "push": "Rural poverty, crop failures, landlord exploitation", "pull": "Factory jobs, higher wages, urban opportunities"}, "1950": {"pct": 30, "urban_pop": "750M", "world_pop": "2.5B", "regions": {"NA": 64, "EU": 52, "Asia": 17, "Africa": 14, "SAm": 42}, "fact": "Post-WWII industrialization drove mass urban migration. The US, UK, and parts of Western Europe became majority-urban. In the Global South, cities began growing rapidly as colonial economies shifted.", "push": "Mechanized farming reduces rural jobs, post-war displacement", "pull": "Industrial employment, education, infrastructure"}, "1980": {"pct": 39, "urban_pop": "1.75B", "world_pop": "4.4B", "regions": {"NA": 74, "EU": 71, "Asia": 27, "Africa": 27, "SAm": 65}, "fact": "The 1970s-80s saw explosive urban growth in Latin America and parts of Asia. Mega-cities like Mexico City and S\u00e3o Paulo emerged. Urban inequality deepened \u2014 wealthy centres surrounded by vast informal settlements (favelas, slums).", "push": "Rural land displacement, drought, armed conflict", "pull": "Economic opportunities, better healthcare, education"}, "2000": {"pct": 47, "urban_pop": "2.85B", "world_pop": "6.1B", "regions": {"NA": 79, "EU": 73, "Asia": 37, "Africa": 36, "SAm": 79}, "fact": "By 2000, urbanization was a global phenomenon. East Asian cities like Shanghai and Seoul transformed dramatically. The UN reported that the number of people living in urban slums exceeded 900 million worldwide \u2014 1 in 3 urban dwellers.", "push": "Climate impacts on farming, economic crisis in rural areas", "pull": "Global supply chains, tech economy, middle-class growth"}, "2020": {"pct": 56, "urban_pop": "4.4B", "world_pop": "7.8B", "regions": {"NA": 83, "EU": 75, "Asia": 51, "Africa": 43, "SAm": 81}, "fact": "For the first time in history, more than half of humanity lives in cities. Africa is urbanizing faster than any other region. By 2050, the UN projects 68% of humanity will be urban. Sustainable urban design is one of the century's great challenges.", "push": "Climate change, automation displacing rural work", "pull": "Innovation hubs, services economy, social connectivity"}};
+const YRS=["1900","1950","1980","2000","2020"];
+let score=0,answered=0,total=0;
+document.addEventListener('DOMContentLoaded',()=>{
+  total=document.querySelectorAll('.qc').length;
+  updateViz(0);
+});
+document.getElementById('yr-slider').addEventListener('input',function(){
+  updateViz(parseInt(this.value));
+});
+function updateViz(idx){
+  const yr=YRS[idx];
+  const d=D[yr];
+  document.getElementById('yr-display').textContent=yr;
+  document.getElementById('stat-urban').textContent=d.urban_pop;
+  document.getElementById('stat-world').textContent='of '+d.world_pop+' total';
+  document.getElementById('fact-text').textContent=d.fact;
+  document.getElementById('push-text').textContent=d.push;
+  document.getElementById('pull-text').textContent=d.pull;
+  document.getElementById('lbl-global').textContent=d.pct+'%';
+  document.getElementById('lbl-pop').textContent=d.urban_pop+' urban';
+  const reg=d.regions;
+  Object.keys(reg).forEach(k=>{
+    const lbl=document.getElementById('lbl-'+k);
+    if(lbl) lbl.textContent=reg[k]+'%';
+    const el=document.getElementById('reg-'+k);
+    if(el) el.setAttribute('opacity',(0.3+reg[k]/100*0.7).toFixed(2));
+  });
+}
+function handleQ(btn,qi){
+  const card=btn.closest('.qc');
+  card.querySelectorAll('.qo').forEach(b=>b.disabled=true);
+  const ok=btn.dataset.correct==='true';
+  btn.classList.add(ok?'correct':'wrong');
+  if(!ok) card.querySelectorAll('.qo').forEach(b=>{if(b.dataset.correct==='true') b.classList.add('correct')});
+  const fbs=["About 14% of the world's population lived in cities in 1900 \u2014 less than 1 in 7 people.", "North America urbanized rapidly between 1900 and 1950, driven by industrialization and post-war economic growth.", "About 56% of the global population \u2014 over 4 billion people \u2014 live in urban areas as of 2020.", "Pull factors attract people to a new location \u2014 like jobs, education, or better infrastructure."];
+  const fb=document.getElementById('qfb'+qi);
+  fb.textContent=ok?('Correct! '+fbs[qi]):('Not quite. '+fbs[qi]);
+  fb.className='qfb show '+(ok?'correct':'wrong');
+  if(ok) score++;
+  answered++;
+  if(answered===total){setTimeout(()=>{
+    document.getElementById('qres').style.display='block';
+    document.getElementById('qs').textContent=score+'/'+total;
+    const msgs=['Review the data and try again!','Good effort! Try exploring the slider more.','Solid work!','Great understanding of urbanization!','Perfect! Outstanding work!'];
+    document.getElementById('qm').textContent=msgs[Math.min(score,4)];
+  },600);}
+}
+function resetQuiz(){
+  score=0;answered=0;
+  document.querySelectorAll('.qc').forEach(c=>{
+    c.querySelectorAll('.qo').forEach(b=>{b.disabled=false;b.classList.remove('correct','wrong')});
+    c.querySelectorAll('.qfb').forEach(f=>{f.className='qfb'});
+  });
+  document.getElementById('qres').style.display='none';
+}
+function toggleCurric(){
+  document.getElementById('cbody').classList.toggle('open');
+  document.getElementById('cico').classList.toggle('open');
+}
+</script></body></html>

@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Road to Confederation - ClassroomTools</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--red:#C62828;--red2:#E53935;--mpl:#FF8F00;--dark:#1a0000;--lt:#FFF8F0;--border-acc:#EF9A9A;--heading:#C62828;--bg-light:#FFF8F0;--exp-bg:#FFEBEE;--mut:#777}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--lt);color:var(--dark);line-height:1.6}
+.topbar{display:flex;align-items:center;gap:1rem;padding:.75rem 1.5rem;background:var(--red);color:#fff;font-size:.9rem;flex-wrap:wrap}
+.topbar a{color:#FFCDD2;text-decoration:none;font-weight:600}.topbar a:hover{text-decoration:underline}
+.badge{margin-left:auto;background:var(--mpl);color:#fff;padding:.3rem .8rem;border-radius:999px;font-size:.75rem;font-weight:700;white-space:nowrap}
+.hero{background:linear-gradient(135deg,#7f0000,#C62828,#B71C1C);color:#FFCDD2;padding:2.5rem 1.5rem;text-align:center}
+.hero h1{font-size:clamp(1.6rem,4vw,2.4rem);font-weight:800;margin-bottom:.5rem}
+.hero p{opacity:.9;max-width:600px;margin:0 auto}
+.timeline-sec{padding:2rem 1.5rem;background:var(--lt)}
+.tl-wrap{max-width:1000px;margin:0 auto}
+.tl-hint{text-align:center;font-size:.95rem;color:var(--mut);margin-bottom:1.5rem;font-weight:600}
+.tl-scroll{overflow-x:auto;padding-bottom:1rem}
+.timeline{display:flex;gap:0;position:relative;min-width:700px}
+.tl-line{position:absolute;top:52px;left:0;right:0;height:4px;background:linear-gradient(90deg,var(--red),var(--mpl));z-index:0}
+.ev-card{flex:1;text-align:center;padding:.75rem .5rem;cursor:pointer;position:relative;z-index:1;min-width:110px;transition:transform .2s}
+.ev-card:hover{transform:translateY(-4px)}
+.ev-year{font-size:.85rem;font-weight:800;color:var(--red);margin-bottom:.3rem}
+.ev-title{font-size:.72rem;color:var(--dark);font-weight:600;line-height:1.3;min-height:42px;display:flex;align-items:center;justify-content:center}
+.ev-dot{width:18px;height:18px;border-radius:50%;background:var(--red);border:3px solid var(--lt);margin:.5rem auto 0;box-shadow:0 0 0 2px var(--red);transition:background .2s}
+.ev-card:hover .ev-dot{background:var(--mpl)}
+.modal{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.5);z-index:1000;align-items:center;justify-content:center;padding:1rem}
+.modal.open{display:flex}
+.modal-box{background:#fff;border-radius:16px;max-width:560px;width:100%;padding:2rem;position:relative;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.3);animation:slideUp .3s}
+@keyframes slideUp{from{transform:translateY(30px);opacity:0}to{transform:translateY(0);opacity:1}}
+.modal-close{position:absolute;top:1rem;right:1rem;background:none;border:none;font-size:1.5rem;cursor:pointer;color:var(--mut);line-height:1}
+.modal-year{font-size:2rem;font-weight:800;color:var(--red);margin-bottom:.25rem}
+.modal-title{font-size:1.15rem;font-weight:700;color:var(--dark);margin-bottom:1rem;border-bottom:2px solid #FFCDD2;padding-bottom:.75rem}
+.modal-desc{font-size:.93rem;line-height:1.7;margin-bottom:1rem}
+.modal-quote{background:#FFF8E1;border-left:4px solid var(--mpl);padding:.75rem 1rem;border-radius:0 8px 8px 0;font-size:.87rem;font-style:italic;color:#5D4037}
+.quiz-sec{background:#FFEBEE;padding:2.5rem 1.5rem}.quiz-wrap{max-width:680px;margin:0 auto}
+.quiz-sec h2{font-size:1.35rem;font-weight:800;color:var(--red);text-align:center;margin-bottom:.2rem}
+.quiz-sec .sub{text-align:center;color:var(--mut);font-size:.88rem;margin-bottom:1.75rem}
+.qc{background:#fff;border:1.5px solid #FFCDD2;border-radius:12px;padding:1.35rem;margin-bottom:1rem}
+.qn{font-size:.71rem;font-weight:700;color:var(--mpl);text-transform:uppercase;letter-spacing:.06em;margin-bottom:.3rem}
+.qt{font-size:.96rem;font-weight:600;margin-bottom:.85rem}.qopts{display:grid;gap:.4rem}
+.qo{background:#FFF8F0;border:1.5px solid #FFCDD2;border-radius:7px;padding:.55rem .9rem;font-size:.87rem;cursor:pointer;text-align:left;transition:all .2s;color:var(--dark);width:100%}
+.qo:hover:not(:disabled){background:#FFCDD2;border-color:var(--red)}
+.qo.correct{background:#d1fae5;border-color:#10b981;color:#065f46}
+.qo.wrong{background:#fee2e2;border-color:#ef4444;color:#991b1b}
+.qo:disabled{cursor:default}
+.qfb{font-size:.83rem;margin-top:.6rem;padding:.5rem .8rem;border-radius:7px;display:none}
+.qfb.show{display:block}.qfb.correct{background:#d1fae5;color:#065f46}.qfb.wrong{background:#fee2e2;color:#991b1b}
+.qresult{text-align:center;background:#fff;border:2px solid #FFCDD2;border-radius:12px;padding:1.75rem;margin-top:1rem;display:none}
+.qresult h3{font-size:1.3rem;font-weight:800;color:var(--red)}.qresult .sc{font-size:2.8rem;font-weight:800;color:var(--mpl);margin:.4rem 0}
+.btn{background:var(--red);color:#fff;border:none;padding:.7rem 1.6rem;border-radius:8px;font-size:.92rem;font-weight:700;cursor:pointer;margin-top:.9rem;transition:background .2s}
+.btn:hover{background:var(--red2)}
+.curric-sec{background:#fff;padding:2rem 1.5rem;border-top:3px solid var(--border-acc)}.curric-wrap{max-width:760px;margin:0 auto}
+.ctog{width:100%;background:none;border:2px solid var(--border-acc);border-radius:10px;padding:1rem 1.25rem;display:flex;justify-content:space-between;align-items:center;cursor:pointer;font-size:.95rem;font-weight:700;color:var(--heading);transition:background .2s;text-align:left}
+.ctog:hover{background:var(--bg-light)}.cico{transition:transform .3s}.cico.open{transform:rotate(180deg)}
+.cbody{display:none;border:2px solid var(--border-acc);border-top:none;border-radius:0 0 10px 10px;padding:1.5rem;background:var(--bg-light)}
+.cbody.open{display:block}
+.cgrid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem}
+@media(max-width:500px){.cgrid{grid-template-columns:1fr}}
+.ci label{font-size:.71rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--mut);display:block;margin-bottom:.2rem}
+.ci span{font-size:.92rem;font-weight:600}
+.cexp{background:var(--exp-bg);border-left:4px solid var(--border-acc);padding:.8rem 1rem;border-radius:0 8px 8px 0;margin-top:.8rem}
+.cexp .ecode{font-weight:800;color:var(--heading);font-size:.87rem}.cexp .etxt{font-size:.87rem;margin-top:.2rem}
+.chow{margin-top:.9rem;font-size:.87rem;color:#555;line-height:1.65;padding:.7rem;background:rgba(0,0,0,.03);border-radius:8px}
+.chow strong{color:#222}
+footer{background:#7f0000;color:rgba(255,255,255,.6);text-align:center;padding:1.2rem;font-size:.81rem}
+footer strong{color:#fff}
+</style></head><body>
+<div class="topbar"><a href="../">&larr; Back to Classroom Tools</a>
+<span class="badge">&#127809; Grade 8 &middot; History &middot; Confederation 1850&ndash;1867</span></div>
+<div class="hero"><h1>&#127809; Road to Confederation</h1>
+<p>Trace the key events, debates, and decisions that led to the birth of Canada in 1867 &mdash; from political deadlock to a new nation.</p></div>
+<section class="timeline-sec"><div class="tl-wrap">
+<p class="tl-hint">&#128070; Click any event on the timeline to learn more</p>
+<div class="tl-scroll">
+<div class="timeline">
+<div class="tl-line"></div><div class="ev-card" id="ev0" onclick="openEvent(0)">
+<div class="ev-year">1849</div>
+<div class="ev-title">Rebellions Aftermath & Act of Union</div>
+<div class="ev-dot"></div>
+</div><div class="ev-card" id="ev1" onclick="openEvent(1)">
+<div class="ev-year">1854</div>
+<div class="ev-title">Reciprocity Treaty with the USA</div>
+<div class="ev-dot"></div>
+</div><div class="ev-card" id="ev2" onclick="openEvent(2)">
+<div class="ev-year">1858</div>
+<div class="ev-title">Gold Rush & British Columbia</div>
+<div class="ev-dot"></div>
+</div><div class="ev-card" id="ev3" onclick="openEvent(3)">
+<div class="ev-year">1860</div>
+<div class="ev-title">Political Deadlock in the Province of Canada</div>
+<div class="ev-dot"></div>
+</div><div class="ev-card" id="ev4" onclick="openEvent(4)">
+<div class="ev-year">1864</div>
+<div class="ev-title">Charlottetown Conference</div>
+<div class="ev-dot"></div>
+</div><div class="ev-card" id="ev5" onclick="openEvent(5)">
+<div class="ev-year">1864</div>
+<div class="ev-title">Quebec Conference</div>
+<div class="ev-dot"></div>
+</div><div class="ev-card" id="ev6" onclick="openEvent(6)">
+<div class="ev-year">1866</div>
+<div class="ev-title">Fenian Raids & American Threat</div>
+<div class="ev-dot"></div>
+</div><div class="ev-card" id="ev7" onclick="openEvent(7)">
+<div class="ev-year">1867</div>
+<div class="ev-title">British North America Act, July 1</div>
+<div class="ev-dot"></div>
+</div></div></div></div></section><div class="modal" id="modal" onclick="closeModal(event)">
+<div class="modal-box" id="modal-box">
+<button class="modal-close" onclick="closeModal(null)">&times;</button>
+<div class="modal-year" id="m-year"></div>
+<div class="modal-title" id="m-title"></div>
+<div class="modal-desc" id="m-desc"></div>
+<div class="modal-quote" id="m-quote"></div>
+</div></div><section class="quiz-sec"><div class="quiz-wrap">
+<h2>&#127809; Knowledge Check</h2><p class="sub">Five questions on the Road to Confederation.</p>
+<div id="qa"><div class="qc"><div class="qn">Question 1 of 5</div><div class="qt">Which event is often called the 'birthplace of Confederation' because it launched serious discussions about union?</div><div class="qopts"><button class="qo" data-correct="false" onclick="handleQ(this,0)">The Quebec Conference 1864</button><button class="qo" data-correct="true" onclick="handleQ(this,0)">The Charlottetown Conference 1864</button><button class="qo" data-correct="false" onclick="handleQ(this,0)">The BNA Act 1867</button><button class="qo" data-correct="false" onclick="handleQ(this,0)">The Reciprocity Treaty 1854</button></div><div class="qfb" id="qfb0"></div></div><div class="qc"><div class="qn">Question 2 of 5</div><div class="qt">What was the name of the constitutional blueprint produced at the Quebec Conference (1864)?</div><div class="qopts"><button class="qo" data-correct="false" onclick="handleQ(this,1)">The Act of Union</button><button class="qo" data-correct="false" onclick="handleQ(this,1)">The Durham Report</button><button class="qo" data-correct="true" onclick="handleQ(this,1)">The Seventy-Two Resolutions</button><button class="qo" data-correct="false" onclick="handleQ(this,1)">The BNA Act</button></div><div class="qfb" id="qfb1"></div></div><div class="qc"><div class="qn">Question 3 of 5</div><div class="qt">Which external threat in 1866 helped convince New Brunswick to support Confederation?</div><div class="qopts"><button class="qo" data-correct="false" onclick="handleQ(this,2)">American annexation vote</button><button class="qo" data-correct="false" onclick="handleQ(this,2)">French invasion</button><button class="qo" data-correct="true" onclick="handleQ(this,2)">Fenian Raids from Irish-Americans</button><button class="qo" data-correct="false" onclick="handleQ(this,2)">Gold Rush migration</button></div><div class="qfb" id="qfb2"></div></div><div class="qc"><div class="qn">Question 4 of 5</div><div class="qt">On what date did the Dominion of Canada officially come into existence?</div><div class="qopts"><button class="qo" data-correct="false" onclick="handleQ(this,3)">March 29, 1867</button><button class="qo" data-correct="false" onclick="handleQ(this,3)">January 1, 1867</button><button class="qo" data-correct="true" onclick="handleQ(this,3)">July 1, 1867</button><button class="qo" data-correct="false" onclick="handleQ(this,3)">September 1, 1867</button></div><div class="qfb" id="qfb3"></div></div><div class="qc"><div class="qn">Question 5 of 5</div><div class="qt">Which four original provinces formed the Dominion of Canada in 1867?</div><div class="qopts"><button class="qo" data-correct="false" onclick="handleQ(this,4)">Ontario, Quebec, Nova Scotia, PEI</button><button class="qo" data-correct="true" onclick="handleQ(this,4)">Ontario, Quebec, Nova Scotia, New Brunswick</button><button class="qo" data-correct="false" onclick="handleQ(this,4)">Ontario, Quebec, Manitoba, BC</button><button class="qo" data-correct="false" onclick="handleQ(this,4)">All of British North America</button></div><div class="qfb" id="qfb4"></div></div></div>
+<div class="qresult" id="qres"><h3>Quiz Complete! &#127809;</h3><div class="sc" id="qs"></div><p id="qm"></p>
+<button class="btn" onclick="resetQuiz()">Try Again</button></div></div></section>
+<section class="curric-sec"><div class="curric-wrap">
+<button class="ctog" id="ctog" onclick="toggleCurric()">
+<span>&#128203; Curriculum Connection &mdash; for Teachers</span><span class="cico" id="cico">&#9660;</span></button>
+<div class="cbody" id="cbody">
+<div class="cgrid">
+<div class="ci"><label>Subject &amp; Grade</label><span>Grade 8 &mdash; History</span></div>
+<div class="ci"><label>Strand</label><span>Canada, 1850&ndash;1914: Building a Nation</span></div>
+</div>
+<div class="cexp"><div class="ecode">B2.1 &mdash; Factors Leading to Confederation</div>
+<div class="etxt">Describe key factors (political, economic, military, and geographic) that led to Confederation in 1867 and explain their relative importance.</div></div>
+<div class="cexp" style="margin-top:.6rem"><div class="ecode">B1.2 &mdash; Continuity and Change</div>
+<div class="etxt">Analyse how key events between 1850 and 1867 contributed to the formation of Canada and have shaped its development as a nation.</div></div>
+<div class="chow"><strong>How this tool addresses it:</strong> Students interact with a scrollable, clickable timeline of 8 key events leading to Confederation, reading primary source quotes and contextual explanations. The five-question quiz reinforces core concepts. The Canadian red/maple-leaf theme reinforces national identity. Primary source integration supports historical thinking skills.</div>
+</div></div></section>
+<footer><strong>ClassroomTools</strong> &middot; Road to Confederation &middot; Grade 8 History</footer>
+<script>
+const EV=[{"y": 1849, "t": "Rebellions Aftermath & Act of Union", "d": "After the 1837-38 Rebellions in Upper and Lower Canada, Britain passed the Act of Union (1841) creating the Province of Canada. By 1849, responsible government was achieved \u2014 elected governments controlled their own affairs. But tensions between Canada West (Ontario) and Canada East (Quebec) made governing nearly impossible.", "q": "\"The government of a colony should have at its head a person belonging to the dominant party.\" &mdash; Lord Durham, 1839"}, {"y": 1854, "t": "Reciprocity Treaty with the USA", "d": "A free trade agreement with the United States boosted the economies of the British colonies for over a decade. When the US cancelled it in 1866, colonies scrambled to find new trading partners \u2014 and saw economic union with each other as a solution.", "q": "\"The abrogation of the Reciprocity Treaty compels us to find new markets.\" &mdash; John A. Macdonald, 1866"}, {"y": 1858, "t": "Gold Rush & British Columbia", "d": "Gold discoveries on the Fraser River brought 30,000 prospectors. Britain quickly created the Colony of British Columbia to maintain order and sovereignty, aware that American expansionism threatened to absorb the region.", "q": "\"The gold rush brought people who cared nothing for sovereignty \u2014 only for gold.\" &mdash; Governor James Douglas"}, {"y": 1860, "t": "Political Deadlock in the Province of Canada", "d": "The dual-capital system (alternating between Quebec City and Toronto) and equal representation between Canada East and West caused constant political deadlock. No stable government could form. This crisis made politicians consider a new federal structure.", "q": "\"The present legislative union of the two provinces has failed.\" &mdash; George Brown, 1864"}, {"y": 1864, "t": "Charlottetown Conference", "d": "Maritime colonies (Nova Scotia, New Brunswick, PEI) planned their own union. Canadian politicians requested to attend. Meetings at Charlottetown in September 1864 produced enthusiastic support for a broader British North American union. This is considered the birthplace of Confederation.", "q": "\"We are laying the foundations of a great state \u2014 perhaps one of the greatest in the world.\" &mdash; Thomas D'Arcy McGee, 1864"}, {"y": 1864, "t": "Quebec Conference", "d": "Seventy-two resolutions were hammered out in Quebec City over 19 days \u2014 essentially the blueprint for the Constitution. Delegates debated representation by population, federal vs. provincial powers, and Senate appointments. Smaller provinces feared being dominated by larger ones.", "q": "\"The broad principle of federation is to give to the General Government all the great subjects of legislation.\" &mdash; John A. Macdonald"}, {"y": 1866, "t": "Fenian Raids & American Threat", "d": "Irish-American Fenians launched raids across the border hoping to free Ireland by pressuring Britain through Canada. The raids alarmed colonists and strengthened the argument for union \u2014 only a unified nation with its own army could defend itself.", "q": "\"The Fenian invasion was a blessing in disguise \u2014 it convinced New Brunswick to join.\" &mdash; Samuel Tilley"}, {"y": 1867, "t": "British North America Act, July 1", "d": "The British North America Act was passed by the British Parliament on March 29, 1867, and came into force July 1. Ontario, Quebec, Nova Scotia, and New Brunswick became the Dominion of Canada. John A. Macdonald became the first Prime Minister. Manitoba joined in 1870; BC in 1871; PEI in 1873.", "q": "\"With the first dawn of this gladsome summer morning, we hail the birthday of a new nationality.\" &mdash; The Globe, July 1, 1867"}];
+let score=0,answered=0,total=0;
+document.addEventListener('DOMContentLoaded',()=>{total=document.querySelectorAll('.qc').length});
+function openEvent(i){
+  const e=EV[i];
+  document.getElementById('m-year').textContent=e.y;
+  document.getElementById('m-title').textContent=e.t;
+  document.getElementById('m-desc').textContent=e.d;
+  document.getElementById('m-quote').textContent=e.q;
+  document.getElementById('modal').classList.add('open');
+}
+function closeModal(ev){
+  if(!ev||ev.target===document.getElementById('modal')){
+    document.getElementById('modal').classList.remove('open');
+  }
+}
+document.addEventListener('keydown',e=>{if(e.key==='Escape') document.getElementById('modal').classList.remove('open')});
+function handleQ(btn,qi){
+  const card=btn.closest('.qc');
+  card.querySelectorAll('.qo').forEach(b=>b.disabled=true);
+  const ok=btn.dataset.correct==='true';
+  btn.classList.add(ok?'correct':'wrong');
+  if(!ok) card.querySelectorAll('.qo').forEach(b=>{if(b.dataset.correct==='true') b.classList.add('correct')});
+  const fb=document.getElementById('qfb'+qi);
+  fb.textContent=EV[0]?'':'';//placeholder
+  const fbs=["The Charlottetown Conference (September 1864) is considered the birthplace of Confederation.", "The Seventy-Two Resolutions from the Quebec Conference became the blueprint for the Constitution.", "The Fenian Raids (1866) alarmed colonists and helped convince hesitant colonies to join for mutual defense.", "The Dominion of Canada came into existence on July 1, 1867 \u2014 now celebrated as Canada Day.", "Ontario, Quebec, Nova Scotia, and New Brunswick were the four founding provinces in 1867."];
+  fb.textContent=ok?('Correct! '+fbs[qi]):('Not quite. '+fbs[qi]);
+  fb.className='qfb show '+(ok?'correct':'wrong');
+  if(ok) score++;
+  answered++;
+  if(answered===total){setTimeout(()=>{
+    document.getElementById('qres').style.display='block';
+    document.getElementById('qs').textContent=score+'/'+total;
+    const msgs=['Review the timeline and try again!','Good effort! Revisit the key events.','Solid work!','Great job on Canadian history!','Perfect score! Outstanding!'];
+    document.getElementById('qm').textContent=msgs[Math.min(score,4)];
+  },600);}
+}
+function resetQuiz(){
+  score=0;answered=0;
+  document.querySelectorAll('.qc').forEach(c=>{
+    c.querySelectorAll('.qo').forEach(b=>{b.disabled=false;b.classList.remove('correct','wrong')});
+    c.querySelectorAll('.qfb').forEach(f=>{f.className='qfb'});
+  });
+  document.getElementById('qres').style.display='none';
+}
+function toggleCurric(){
+  document.getElementById('cbody').classList.toggle('open');
+  document.getElementById('cico').classList.toggle('open');
+}
+</script></body></html>

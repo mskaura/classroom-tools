@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Treaty Lands Explorer - ClassroomTools</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--e1:#8B4513;--e2:#A0522D;--e3:#CD853F;--e5:#F5DEB3;--e6:#FAEBD7;--acc:#2E8B57;--txt:#2C1810;--mut:#6B4226;--bdr:#C9A882;--border-acc:#CD853F;--heading:#8B4513;--bg-light:#FAEBD7;--exp-bg:#F5DEB3}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#FFFEF9;color:var(--txt);line-height:1.6}
+.topbar{display:flex;align-items:center;gap:1rem;padding:.75rem 1.5rem;background:var(--e1);color:#fff;font-size:.9rem;flex-wrap:wrap}
+.topbar a{color:#FFD9A0;text-decoration:none;font-weight:600}.topbar a:hover{text-decoration:underline}
+.badge{margin-left:auto;background:#2E8B57;color:#fff;padding:.3rem .8rem;border-radius:999px;font-size:.75rem;font-weight:700;white-space:nowrap}
+.hero{background:linear-gradient(135deg,#3D1F00,#6B3A2A,#8B4513);color:#FFE4B5;padding:2.5rem 1.5rem;text-align:center}
+.hero h1{font-size:clamp(1.6rem,4vw,2.4rem);font-weight:800;margin-bottom:.5rem}
+.hero p{opacity:.85;max-width:600px;margin:0 auto}
+.map-sec{padding:2rem 1.5rem;background:#FDF6EC}.map-wrap{max-width:960px;margin:0 auto}
+.map-hint{text-align:center;font-size:.95rem;color:var(--mut);margin-bottom:1.25rem;font-weight:600}
+.map-grid{display:grid;grid-template-columns:1fr 310px;gap:1.5rem;align-items:start}
+@media(max-width:680px){.map-grid{grid-template-columns:1fr}}
+#cmap{width:100%;height:auto;border-radius:12px;border:2px solid var(--bdr);box-shadow:0 4px 16px rgba(0,0,0,.12)}
+.tr{cursor:pointer;stroke:#5C3317;stroke-width:1.5;transition:opacity .2s,stroke-width .2s}
+.tr:hover{opacity:.72;stroke-width:3;stroke:#1a0800}
+.info-panel{background:#fff;border:2px solid var(--bdr);border-radius:14px;padding:1.5rem;min-height:280px}
+.ph{text-align:center;color:var(--mut);padding:2.5rem 1rem}.ph-ico{font-size:2.5rem;margin-bottom:.75rem}
+.info-panel h2{font-size:1.1rem;font-weight:800;color:var(--e1);margin-bottom:.2rem}
+.ttag{font-size:.78rem;font-weight:700;color:var(--acc);margin-bottom:.8rem;text-transform:uppercase;letter-spacing:.04em}
+.ir{display:flex;gap:.5rem;margin-bottom:.35rem;font-size:.86rem}.il{font-weight:700;color:var(--mut);min-width:70px;flex-shrink:0}
+.fact{background:var(--e5);border-left:4px solid var(--e2);padding:.7rem 1rem;border-radius:0 8px 8px 0;margin-top:.9rem;font-size:.84rem}
+.fact strong{display:block;color:var(--e1);margin-bottom:.2rem}
+.legend{display:flex;flex-wrap:wrap;gap:.45rem;margin-top:1.2rem;justify-content:center}
+.li{display:flex;align-items:center;gap:.35rem;font-size:.76rem;color:var(--mut)}
+.ls{width:12px;height:12px;border-radius:3px;border:1px solid rgba(0,0,0,.2);flex-shrink:0}
+.quiz-sec{background:var(--e6);padding:2.5rem 1.5rem}.quiz-wrap{max-width:680px;margin:0 auto}
+.quiz-sec h2{font-size:1.35rem;font-weight:800;color:var(--e1);text-align:center;margin-bottom:.2rem}
+.quiz-sec .sub{text-align:center;color:var(--mut);font-size:.88rem;margin-bottom:1.75rem}
+.qc{background:#fff;border:1.5px solid var(--bdr);border-radius:12px;padding:1.35rem;margin-bottom:1rem}
+.qn{font-size:.71rem;font-weight:700;color:var(--acc);text-transform:uppercase;letter-spacing:.06em;margin-bottom:.3rem}
+.qt{font-size:.96rem;font-weight:600;margin-bottom:.85rem}.qopts{display:grid;gap:.4rem}
+.qo{background:var(--e6);border:1.5px solid var(--bdr);border-radius:7px;padding:.55rem .9rem;font-size:.87rem;cursor:pointer;text-align:left;transition:all .2s;color:var(--txt);width:100%}
+.qo:hover:not(:disabled){background:#DEB887;border-color:var(--e2)}
+.qo.correct{background:#d1fae5;border-color:#10b981;color:#065f46}
+.qo.wrong{background:#fee2e2;border-color:#ef4444;color:#991b1b}
+.qo:disabled{cursor:default}
+.qfb{font-size:.83rem;margin-top:.6rem;padding:.5rem .8rem;border-radius:7px;display:none}
+.qfb.show{display:block}.qfb.correct{background:#d1fae5;color:#065f46}.qfb.wrong{background:#fee2e2;color:#991b1b}
+.qresult{text-align:center;background:#fff;border:2px solid var(--bdr);border-radius:12px;padding:1.75rem;margin-top:1rem;display:none}
+.qresult h3{font-size:1.3rem;font-weight:800;color:var(--e1)}.qresult .sc{font-size:2.8rem;font-weight:800;color:var(--acc);margin:.4rem 0}
+.btn{background:var(--e1);color:#fff;border:none;padding:.7rem 1.6rem;border-radius:8px;font-size:.92rem;font-weight:700;cursor:pointer;margin-top:.9rem;transition:background .2s}
+.btn:hover{background:var(--e2)}
+.curric-sec{background:#fff;padding:2rem 1.5rem;border-top:3px solid var(--border-acc)}.curric-wrap{max-width:760px;margin:0 auto}
+.ctog{width:100%;background:none;border:2px solid var(--border-acc);border-radius:10px;padding:1rem 1.25rem;display:flex;justify-content:space-between;align-items:center;cursor:pointer;font-size:.95rem;font-weight:700;color:var(--heading);transition:background .2s;text-align:left}
+.ctog:hover{background:var(--bg-light)}.cico{transition:transform .3s}.cico.open{transform:rotate(180deg)}
+.cbody{display:none;border:2px solid var(--border-acc);border-top:none;border-radius:0 0 10px 10px;padding:1.5rem;background:var(--bg-light)}
+.cbody.open{display:block}
+.cgrid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem}
+@media(max-width:500px){.cgrid{grid-template-columns:1fr}}
+.ci label{font-size:.71rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--mut);display:block;margin-bottom:.2rem}
+.ci span{font-size:.92rem;font-weight:600}
+.cexp{background:var(--exp-bg);border-left:4px solid var(--border-acc);padding:.8rem 1rem;border-radius:0 8px 8px 0;margin-top:.8rem}
+.cexp .ecode{font-weight:800;color:var(--heading);font-size:.87rem}.cexp .etxt{font-size:.87rem;margin-top:.2rem}
+.chow{margin-top:.9rem;font-size:.87rem;color:#555;line-height:1.65;padding:.7rem;background:rgba(0,0,0,.03);border-radius:8px}
+.chow strong{color:#222}
+footer{background:var(--e1);color:rgba(255,255,255,.6);text-align:center;padding:1.2rem;font-size:.81rem}
+footer strong{color:#fff}
+</style></head><body>
+<div class="topbar"><a href="../">&larr; Back to Classroom Tools</a>
+<span class="badge">&#128218; Grade 7/8 &middot; Social Studies &middot; Indigenous Nations &amp; Treaties</span></div>
+<div class="hero"><h1>&#128506; Treaty Lands Explorer</h1>
+<p>Explore the Indigenous treaty regions of Canada &mdash; click any region to learn about the nations, the agreements, and the history of the land we share.</p></div>
+<section class="map-sec"><div class="map-wrap">
+<p class="map-hint">&#128070; Click any coloured region to explore that treaty area</p>
+<div class="map-grid"><div>
+<svg id="cmap" viewBox="0 0 820 580" xmlns="http://www.w3.org/2000/svg">
+<polygon class="tr" id="r-nunavut" fill="#7B8FA1" points="430,10 790,10 790,210 620,200 470,220 465,60"/>
+<text x="630" y="105" font-size="9" fill="#dce8f0" text-anchor="middle" pointer-events="none" font-weight="bold">Modern Treaties / Inuit Nunangat</text>
+<polygon class="tr" id="r-t11" fill="#355E3B" points="145,50 430,10 465,60 470,220 390,205 390,175 280,185 280,165 145,185"/>
+<text x="295" y="118" font-size="10" fill="#A8D8A8" text-anchor="middle" pointer-events="none" font-weight="bold">Treaty 11</text>
+<polygon class="tr" id="r-t8" fill="#556B2F" points="130,185 390,175 390,205 470,220 465,270 395,265 230,280 145,270 130,240"/>
+<text x="278" y="228" font-size="9" fill="#E0F0C0" text-anchor="middle" pointer-events="none" font-weight="bold">Treaty 8</text>
+<polygon class="tr" id="r-t10" fill="#4A7340" points="280,185 390,175 395,265 280,280"/>
+<text x="337" y="230" font-size="8" fill="#d0f0b0" text-anchor="middle" pointer-events="none" font-weight="bold">10</text>
+<polygon class="tr" id="r-t9" fill="#3D7A50" points="470,220 620,200 640,380 580,395 555,370 500,360 465,295 470,265"/>
+<text x="558" y="290" font-size="9" fill="#C0F0C8" text-anchor="middle" pointer-events="none" font-weight="bold">Treaty 9</text>
+<polygon class="tr" id="r-t6" fill="#7B3F00" points="145,270 390,265 395,350 230,355 145,350"/>
+<text x="268" y="311" font-size="9" fill="#FFD9A0" text-anchor="middle" pointer-events="none" font-weight="bold">Treaty 6</text>
+<polygon class="tr" id="r-t5" fill="#8B6914" points="395,265 500,255 510,360 500,360 465,295 470,265"/>
+<text x="468" y="310" font-size="8" fill="#FFE480" text-anchor="middle" pointer-events="none" font-weight="bold">5</text>
+<polygon class="tr" id="r-t4" fill="#A0522D" points="230,355 395,350 400,400 235,405"/>
+<text x="315" y="379" font-size="9" fill="#fff" text-anchor="middle" pointer-events="none" font-weight="bold">Treaty 4</text>
+<polygon class="tr" id="r-t7" fill="#6B3020" points="145,350 230,355 235,405 150,408"/>
+<text x="192" y="380" font-size="8" fill="#FFD9A0" text-anchor="middle" pointer-events="none" font-weight="bold">Tr.7</text>
+<polygon class="tr" id="r-t1" fill="#CD853F" points="400,360 510,360 515,405 405,410"/>
+<text x="458" y="386" font-size="8" fill="#fff" text-anchor="middle" pointer-events="none" font-weight="bold">1&amp;2</text>
+<polygon class="tr" id="r-t3" fill="#B8860B" points="510,360 555,350 575,395 535,415 515,405"/>
+<text x="542" y="383" font-size="8" fill="#fff" text-anchor="middle" pointer-events="none" font-weight="bold">Tr.3</text>
+<polygon class="tr" id="r-robinson" fill="#D4A017" points="555,370 640,380 660,430 610,455 565,430 540,415 575,395"/>
+<text x="605" y="412" font-size="8" fill="#3C2800" text-anchor="middle" pointer-events="none" font-weight="bold">Robinson</text>
+<polygon class="tr" id="r-upper" fill="#C4A265" points="580,430 660,430 680,470 630,495 580,470"/>
+<text x="628" y="458" font-size="7" fill="#3C2800" text-anchor="middle" pointer-events="none" font-weight="bold">Upper Canada</text>
+<polygon class="tr" id="r-atlantic" fill="#9E8060" points="650,360 810,340 810,430 660,430"/>
+<text x="728" y="393" font-size="8" fill="#fff" text-anchor="middle" pointer-events="none" font-weight="bold">Mi'kmaq/Atlantic</text>
+<polygon class="tr" id="r-unceded" fill="#8AA8C0" points="55,185 145,185 145,420 100,445 60,420"/>
+<text x="100" y="316" font-size="8" fill="#1a3a50" text-anchor="middle" pointer-events="none" font-weight="bold">Unceded BC</text>
+<polygon class="tr" id="r-douglas" fill="#7BAA85" points="40,390 90,375 100,420 80,450 40,440"/>
+<text x="68" y="412" font-size="7" fill="#1a3a18" text-anchor="middle" pointer-events="none" font-weight="bold">Douglas</text>
+<ellipse cx="560" cy="168" rx="80" ry="62" fill="#B0D4E8" opacity=".45" pointer-events="none"/>
+<text x="560" y="172" font-size="8" fill="#3A6A88" text-anchor="middle" pointer-events="none">Hudson Bay</text>
+<g transform="translate(775,540)"><circle r="18" fill="rgba(255,255,255,.8)" stroke="#8B4513" stroke-width="1.5"/>
+<text y="-5" text-anchor="middle" font-size="8" fill="#8B4513" font-weight="bold">N</text>
+<text y="12" text-anchor="middle" font-size="7" fill="#8B4513">S</text>
+<text x="-10" y="4" text-anchor="middle" font-size="7" fill="#8B4513">W</text>
+<text x="10" y="4" text-anchor="middle" font-size="7" fill="#8B4513">E</text></g>
+<text x="410" y="572" text-anchor="middle" font-size="7.5" fill="#8B4513" font-style="italic">Schematic map - simplified for educational use. Not to geographic scale.</text>
+</svg>
+<div class="legend">
+<div class="li"><div class="ls" style="background:#7BAA85"></div>Douglas</div>
+<div class="li"><div class="ls" style="background:#D4A017"></div>Robinson</div>
+<div class="li"><div class="ls" style="background:#CD853F"></div>Tr.1-2</div>
+<div class="li"><div class="ls" style="background:#B8860B"></div>Tr.3</div>
+<div class="li"><div class="ls" style="background:#A0522D"></div>Tr.4</div>
+<div class="li"><div class="ls" style="background:#8B6914"></div>Tr.5</div>
+<div class="li"><div class="ls" style="background:#7B3F00"></div>Tr.6</div>
+<div class="li"><div class="ls" style="background:#6B3020"></div>Tr.7</div>
+<div class="li"><div class="ls" style="background:#4A7340"></div>Tr.8-10</div>
+<div class="li"><div class="ls" style="background:#355E3B"></div>Tr.11</div>
+<div class="li"><div class="ls" style="background:#8AA8C0"></div>Unceded BC</div>
+<div class="li"><div class="ls" style="background:#7B8FA1"></div>Modern</div>
+</div></div>
+<div class="info-panel" id="ip"><div class="ph" id="ph"><div class="ph-ico">&#128070;</div>
+<p><strong>Click a region</strong> to explore treaty details.</p></div>
+<div id="pc" style="display:none"></div></div></div></div></section>
+<section class="quiz-sec"><div class="quiz-wrap">
+<h2>&#129334; Knowledge Check</h2><p class="sub">Five questions on Canadian treaties and Indigenous nations.</p>
+<div id="qa"><div class="qc"><div class="qn">Question 1 of 5</div><div class="qt">Which treaties covered most of the Prairie provinces between 1871 and 1877?</div><div class="qopts"><button class="qo" data-correct="false" onclick="handleQ(this,0)">The Douglas Treaties</button><button class="qo" data-correct="true" onclick="handleQ(this,0)">Numbered Treaties 1-7</button><button class="qo" data-correct="false" onclick="handleQ(this,0)">The Robinson Treaties</button><button class="qo" data-correct="false" onclick="handleQ(this,0)">Treaty 11 only</button></div><div class="qfb" id="qfb0"></div></div><div class="qc"><div class="qn">Question 2 of 5</div><div class="qt">The Douglas Treaties were signed with First Nations on which island?</div><div class="qopts"><button class="qo" data-correct="false" onclick="handleQ(this,1)">Haida Gwaii</button><button class="qo" data-correct="false" onclick="handleQ(this,1)">Baffin Island</button><button class="qo" data-correct="true" onclick="handleQ(this,1)">Vancouver Island</button><button class="qo" data-correct="false" onclick="handleQ(this,1)">Prince Edward Island</button></div><div class="qfb" id="qfb1"></div></div><div class="qc"><div class="qn">Question 3 of 5</div><div class="qt">Treaty 9 covers most of northern Ontario. Which Nations are primarily associated with it?</div><div class="qopts"><button class="qo" data-correct="true" onclick="handleQ(this,2)">Cree and Ojibwe (Anishinaabe) Nations</button><button class="qo" data-correct="false" onclick="handleQ(this,2)">Blackfoot Confederacy</button><button class="qo" data-correct="false" onclick="handleQ(this,2)">Mi'kmaq and Maliseet</button><button class="qo" data-correct="false" onclick="handleQ(this,2)">Haida and Tsimshian</button></div><div class="qfb" id="qfb2"></div></div><div class="qc"><div class="qn">Question 4 of 5</div><div class="qt">What does 'unceded territory' mean?</div><div class="qopts"><button class="qo" data-correct="false" onclick="handleQ(this,3)">Land returned after broken treaties</button><button class="qo" data-correct="false" onclick="handleQ(this,3)">Reserve land after 1900</button><button class="qo" data-correct="true" onclick="handleQ(this,3)">Land where no treaty surrendering Indigenous title was signed</button><button class="qo" data-correct="false" onclick="handleQ(this,3)">Territory protected under the Indian Act</button></div><div class="qfb" id="qfb3"></div></div><div class="qc"><div class="qn">Question 5 of 5</div><div class="qt">Treaty 11 (1921) covers the Mackenzie River Valley in which territory?</div><div class="qopts"><button class="qo" data-correct="false" onclick="handleQ(this,4)">Yukon Territory</button><button class="qo" data-correct="false" onclick="handleQ(this,4)">Northern Quebec</button><button class="qo" data-correct="false" onclick="handleQ(this,4)">Nunavut</button><button class="qo" data-correct="true" onclick="handleQ(this,4)">Northwest Territories</button></div><div class="qfb" id="qfb4"></div></div></div>
+<div class="qresult" id="qres"><h3>Quiz Complete!</h3><div class="sc" id="qs"></div><p id="qm"></p>
+<button class="btn" onclick="resetQuiz()">Try Again</button></div></div></section>
+<section class="curric-sec"><div class="curric-wrap">
+<button class="ctog" id="ctog" onclick="toggleCurric()">
+<span>&#128203; Curriculum Connection &mdash; for Teachers</span><span class="cico" id="cico">&#9660;</span></button>
+<div class="cbody" id="cbody">
+<div class="cgrid">
+<div class="ci"><label>Subject &amp; Grade</label><span>Grade 7 &amp; 8 &mdash; Social Studies / History</span></div>
+<div class="ci"><label>Strand</label><span>Heritage and Identity: First Nations, Metis, and Inuit Peoples</span></div>
+</div>
+<div class="cexp"><div class="ecode">B2.3 &mdash; Treaties and Relationships with Indigenous Peoples</div>
+<div class="etxt">Explain the significance of treaties between First Nations and the Crown, and describe their relevance to people in Canada today.</div></div>
+<div class="cexp" style="margin-top:.6rem"><div class="ecode">A1.1 &mdash; Indigenous Perspectives &amp; Contributions</div>
+<div class="etxt">Describe the perspectives and contributions of Indigenous groups in shaping Canadian identity, land relationships, and governance structures.</div></div>
+<div class="chow"><strong>How this tool addresses it:</strong> Students interact with a colour-coded schematic map of Canada's major treaty regions, discovering nation names, treaty terms, years signed, and historical context for each area. The five-question quiz assesses comprehension. Respectful framing and emphasis on ongoing land relationships directly supports TRC Calls to Action for K-12 education.</div>
+</div></div></section>
+<footer><strong>ClassroomTools</strong> &middot; Treaty Lands Explorer &middot; Grade 7/8 Social Studies<br/>
+<span style="font-size:.78rem;margin-top:.3rem;display:block">Information sourced from Crown-Indigenous Relations Canada and the TRC Final Report. Presented respectfully for educational purposes.</span></footer>
+<script>
+const TD={"r-nunavut": {"n": "Inuit Nunangat", "t": "Modern Land Claims Agreements", "y": "1975-present", "na": "Inuit peoples: Inuvialuit, Nunavummiut, Nunatsiavut, Nunavik Inuit", "te": "Modern constitutionally-protected co-management agreements with royalty-sharing and self-government rights.", "fa": "The 1993 Nunavut Land Claims Agreement \u2014 largest in Canadian history \u2014 created Nunavut territory in 1999."}, "r-t11": {"n": "Mackenzie River Valley NWT", "t": "Treaty 11", "y": "1921", "na": "Dene Nations: Dehcho, Bear Lake, Tlicho, Aklavik", "te": "Last Numbered Treaty, signed as oil was discovered at Norman Wells. Dene maintain they agreed only to peace, not a land surrender.", "fa": "Chief Monfwi: \"So long as the sun rises and rivers flow, this land will not be touched.\" The Tlicho Land Claim (2005) is among Canada's largest agreements."}, "r-t8": {"n": "N Alberta, NE BC, NW Saskatchewan", "t": "Treaty 8", "y": "1899", "na": "Cree, Dene, Beaver (Dunne-za), and Metis communities", "te": "Largest Numbered Treaty by area (840,000 sq km). Explicitly preserved hunting, fishing, and trapping rights.", "fa": "In 2023, Beaver Lake Cree Nation won a landmark ruling: cumulative oilsands development infringed Treaty 8 rights \u2014 with huge implications for resource law."}, "r-t10": {"n": "Northern Saskatchewan", "t": "Treaty 10", "y": "1906", "na": "Dene, Cree, and Metis peoples", "te": "Covered Churchill and Athabasca River areas. Annual payments of $5/chief, $4/headman, $3/person \u2014 rates unchanged for decades.", "fa": "Many leaders signed with an X \u2014 not illiteracy, but because their names used Cree syllabics that Crown officials could not transcribe."}, "r-t9": {"n": "Northern Ontario (James Bay Treaty)", "t": "Treaty 9", "y": "1905-1906", "na": "Cree, Ojibwe (Anishinaabe), and Ojibwe-Cree Nations", "te": "Covered Ontario's vast boreal north. Paid $8 signing bonus and $4/year per person \u2014 same rate as Treaty 3, thirty years earlier.", "fa": "First Nations signatories report they were told they could continue living as before. The written land surrender was never explained in Indigenous languages."}, "r-t6": {"n": "Central Alberta and Saskatchewan", "t": "Treaty 6", "y": "1876", "na": "Plains Cree, Wood Cree, Assiniboine (Nakoda), and Ojibwe Nations", "te": "Famously includes a \"medicine chest\" clause \u2014 the Crown's obligation to provide health care \u2014 underpinning Indigenous health rights claims today.", "fa": "Chief Mistahimaskwa (Big Bear) refused to sign for six years, warning his people would be trapped. His fears proved accurate during the 1885 North-West Resistance."}, "r-t5": {"n": "Central and Northern Manitoba", "t": "Treaty 5", "y": "1875", "na": "Saulteaux (Ojibwe) and Swampy Cree Nations", "te": "Covered the Lake Winnipeg drainage basin; expanded 1908 for northern communities. Promised annual payments, schools, and tools.", "fa": "Among the first treaties with Cree and Ojibwe interpreters on both sides \u2014 a direct response to translation disputes in earlier signings."}, "r-t4": {"n": "S Saskatchewan \u2014 Qu'Appelle Valley", "t": "Treaty 4", "y": "1874", "na": "Plains Cree, Ojibwe, and Assiniboine (Nakoda) Nations", "te": "Chiefs deeply concerned about rapid buffalo depletion demanded strong promises of farming support for survival.", "fa": "The Cree name Qu'Appelle means \"Who calls?\" \u2014 from a traditional love story. This region was the heartland of the Plains Nations."}, "r-t7": {"n": "Southern Alberta", "t": "Treaty 7", "y": "1877", "na": "Blackfoot Confederacy, Tsuut'ina, and Nakoda Stoney Nations", "te": "The Blackfoot understood they were agreeing to peace and sharing land \u2014 not surrendering it. This interpretive gap persists today.", "fa": "Chief Crowfoot later expressed profound regret as reserve conditions and buffalo extinction brought catastrophic suffering to his people."}, "r-t3": {"n": "NW Ontario and Boundary Waters", "t": "Treaty 3 (Saulteaux Treaty)", "y": "1873", "na": "Anishinaabe (Ojibwe/Saulteaux) Nation", "te": "Covered 55,000 sq miles for CPR railway. Anishinaabe leaders negotiated harder terms than in any prior Numbered Treaty.", "fa": "Chief Mawedopenais told Crown negotiators: \"The sound of the rustling of the gold is under my feet where I stand.\""}, "r-t1": {"n": "Southern Manitoba", "t": "Treaties 1 and 2", "y": "1871", "na": "Anishinaabe (Ojibwe) and Swampy Cree Nations", "te": "First Numbered Treaties. Promised reserve lands, schools, farm tools, and $3/person annually. Many oral promises were not in the written text.", "fa": "Called the \"Stone Fort Treaty,\" signed at Lower Fort Garry. Indigenous leaders petitioned for years about verbal promises never honoured."}, "r-robinson": {"n": "Lake Superior and Lake Huron Region", "t": "Robinson-Superior and Robinson-Huron Treaties", "y": "1850", "na": "Anishinaabe (Ojibwe) Nations of the Great Lakes", "te": "First treaties to include an annuity and explicitly preserve hunting and fishing rights on surrendered lands.", "fa": "In 2023, the Crown acknowledged owing over $10 billion in back annuity payments \u2014 170 years of unkept promises recognized by the Supreme Court."}, "r-upper": {"n": "Southern Ontario", "t": "Williams Treaties and Upper Canada Land Surrenders", "y": "1764-1930", "na": "Mississauga Ojibwe, Haudenosaunee (Six Nations), and Anishinaabe Nations", "te": "A complex series of land surrenders over 150+ years. The 1784 Haldimand Proclamation granted Six Nations land along the Grand River.", "fa": "The Six Nations' claim to the Haldimand Tract is one of Canada's largest unresolved land claims. The 2021 Land Back Lane blockade in Caledonia brought it national attention."}, "r-atlantic": {"n": "Atlantic Canada", "t": "Peace and Friendship Treaties", "y": "1725-1779", "na": "Mi'kmaq, Maliseet (Wolastoqiyik), and Passamaquoddy Nations", "te": "NOT land surrender treaties \u2014 peace agreements recognizing Indigenous sovereignty and rights to trade, fisheries, and territories.", "fa": "R. v. Marshall (1999) confirmed Mi'kmaq treaty rights to fish commercially. The ruling sparked the \"lobster war\" controversy that continues today."}, "r-unceded": {"n": "British Columbia \u2014 Unceded Territories", "t": "No treaties signed (with rare exceptions)", "y": "Ongoing", "na": "200+ First Nations: Coast Salish, Wet'suwet'en, Gitxsan, Haida, and many others", "te": "No land surrender treaties for the vast majority of BC. Provincial governments refused to negotiate treaties for over a century.", "fa": "Delgamuukw v. BC (1997) confirmed Aboriginal title was never extinguished in BC. The Wet'suwet'en declaration that they never ceded their territory is legally recognized."}, "r-douglas": {"n": "Vancouver Island Territories", "t": "Douglas Treaties (14 agreements)", "y": "1850-1854", "na": "Songhees, Saanich, Sooke, Nanaimo, and other Coast Salish Nations", "te": "Negotiated by James Douglas. First Nations understood these as sharing agreements, not land surrenders \u2014 a fundamental interpretive difference.", "fa": "These are the only historic land treaties in BC. First Nations oral traditions describe something very different from what Douglas reported to the Crown."}};
+let score=0,answered=0,total=0;
+document.addEventListener('DOMContentLoaded',()=>{total=document.querySelectorAll('.qc').length});
+document.querySelectorAll('.tr').forEach(el=>{
+  el.addEventListener('click',()=>{
+    document.querySelectorAll('.tr').forEach(t=>t.style.strokeWidth='1.5');
+    el.style.strokeWidth='3.5';
+    const d=TD[el.id];
+    if(!d) return;
+    document.getElementById('ph').style.display='none';
+    const pc=document.getElementById('pc');
+    pc.style.display='block';
+    pc.innerHTML='<h2>'+d.n+'</h2><div class="ttag">'+d.t+'</div>'
+      +'<div class="ir"><span class="il">Year:</span><span>'+d.y+'</span></div>'
+      +'<div class="ir"><span class="il">Nations:</span><span>'+d.na+'</span></div>'
+      +'<div class="ir"><span class="il">Terms:</span><span>'+d.te+'</span></div>'
+      +'<div class="fact"><strong>&#129334; Did you know?</strong>'+d.fa+'</div>';
+  });
+});
+function handleQ(btn,qi){
+  const card=btn.closest('.qc');
+  const btns=card.querySelectorAll('.qo');
+  btns.forEach(b=>b.disabled=true);
+  const correct=btn.dataset.correct==='true';
+  btn.classList.add(correct?'correct':'wrong');
+  if(!correct) btns.forEach(b=>{if(b.dataset.correct==='true') b.classList.add('correct')});
+  const fb=document.getElementById('qfb'+qi);
+  fb.textContent=correct?'Correct! '+btn.textContent:btn.textContent+' — not quite. See the correct answer highlighted above.';
+  fb.className='qfb show '+(correct?'correct':'wrong');
+  if(correct) score++;
+  answered++;
+  if(answered===total){
+    setTimeout(()=>{
+      document.getElementById('qres').style.display='block';
+      document.getElementById('qs').textContent=score+'/'+total;
+      const msgs=['Keep exploring the map and try again!','Good effort — review the regions and try again!','Great work!','Excellent! You know your treaties!','Perfect score! Outstanding!'];
+      document.getElementById('qm').textContent=msgs[Math.min(score,4)];
+    },600);
+  }
+}
+function resetQuiz(){
+  score=0;answered=0;
+  document.querySelectorAll('.qc').forEach(c=>{
+    c.querySelectorAll('.qo').forEach(b=>{b.disabled=false;b.classList.remove('correct','wrong')});
+    c.querySelectorAll('.qfb').forEach(f=>{f.className='qfb'});
+  });
+  document.getElementById('qres').style.display='none';
+  window.scrollTo(0,document.querySelector('.quiz-sec').offsetTop-60);
+}
+function toggleCurric(){
+  document.getElementById('cbody').classList.toggle('open');
+  document.getElementById('cico').classList.toggle('open');
+}
+</script></body></html>
