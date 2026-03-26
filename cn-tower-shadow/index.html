@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CN Tower Shadow Simulator</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Segoe UI', sans-serif;
+    background: #0a0a1a;
+    color: #eee;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    overflow: hidden;
+  }
+  header {
+    background: #111128;
+    border-bottom: 1px solid #2a2a4a;
+    padding: 10px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-shrink: 0;
+  }
+  header h1 { font-size: 1.1rem; color: #a0c4ff; font-weight: 700; }
+  header p { font-size: 0.8rem; color: #777; }
+
+  .main {
+    display: flex;
+    flex: 1;
+    overflow: hidden;
+  }
+
+  #canvas-container {
+    flex: 1;
+    position: relative;
+  }
+
+  #canvas-container canvas {
+    display: block;
+    width: 100% !important;
+    height: 100% !important;
+  }
+
+  .controls {
+    width: 280px;
+    background: #111128;
+    border-left: 1px solid #2a2a4a;
+    padding: 18px 16px;
+    overflow-y: auto;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+  }
+
+  .control-section { display: flex; flex-direction: column; gap: 10px; }
+
+  .control-section h3 {
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #6688aa;
+    font-weight: 700;
+  }
+
+  label { font-size: 0.82rem; color: #bbb; }
+
+  input[type=range] {
+    width: 100%;
+    accent-color: #a0c4ff;
+  }
+
+  select, input[type=number] {
+    background: #1a1a3a;
+    border: 1px solid #3a3a6a;
+    color: #eee;
+    padding: 6px 10px;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    width: 100%;
+  }
+
+  .row { display: flex; gap: 8px; }
+  .row > * { flex: 1; }
+
+  .stat {
+    background: #1a1a3a;
+    border-radius: 8px;
+    padding: 10px 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .stat .label { font-size: 0.7rem; color: #6688aa; text-transform: uppercase; letter-spacing: 0.05em; }
+  .stat .value { font-size: 1rem; font-weight: 700; color: #a0c4ff; }
+
+  .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+
+  .time-display {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #ffffff;
+    text-align: center;
+    letter-spacing: 0.05em;
+  }
+
+  button {
+    background: #1e3a5f;
+    border: 1px solid #3a6aaa;
+    color: #a0c4ff;
+    padding: 9px 14px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    font-weight: 600;
+    transition: background 0.15s;
+    width: 100%;
+  }
+  button:hover { background: #2a4a7f; }
+  button.active { background: #2a5a9f; border-color: #6aaaff; }
+
+  .info-box {
+    background: #0d1f33;
+    border: 1px solid #1e3a5f;
+    border-radius: 8px;
+    padding: 10px 12px;
+    font-size: 0.78rem;
+    color: #99b;
+    line-height: 1.5;
+  }
+
+  @media (max-width: 640px) {
+    .main { flex-direction: column; }
+    .controls { width: 100%; border-left: none; border-top: 1px solid #2a2a4a; max-height: 50vh; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div>
+    <h1>CN Tower Shadow Simulator</h1>
+    <p>Toronto, Ontario &mdash; 43.64 N, 79.39 W</p>
+  </div>
+  <div style="font-size:0.78rem;color:#555">Drag to orbit &bull; Scroll to zoom</div>
+</header>
+
+<div class="main">
+  <div id="canvas-container"></div>
+
+  <div class="controls">
+    <div class="control-section">
+      <h3>Time</h3>
+      <div class="time-display" id="timeDisplay">12:00 PM</div>
+      <label>Hour of day</label>
+      <input type="range" id="timeSlider" min="5" max="21" step="0.25" value="12" oninput="update()">
+    </div>
+
+    <div class="control-section">
+      <h3>Date</h3>
+      <div class="row">
+        <div>
+          <label>Month</label>
+          <select id="monthSelect" onchange="update()">
+            <option value="1">January</option>
+            <option value="2">February</option>
+            <option value="3">March</option>
+            <option value="4">April</option>
+            <option value="5">May</option>
+            <option value="6" selected>June</option>
+            <option value="7">July</option>
+            <option value="8">August</option>
+            <option value="9">September</option>
+            <option value="10">October</option>
+            <option value="11">November</option>
+            <option value="12">December</option>
+          </select>
+        </div>
+        <div>
+          <label>Day</label>
+          <input type="number" id="dayInput" value="21" min="1" max="31" oninput="update()">
+        </div>
+      </div>
+    </div>
+
+    <div class="control-section">
+      <h3>Animation</h3>
+      <button id="animBtn" onclick="toggleAnimate()">Play Day Animation</button>
+    </div>
+
+    <div class="control-section">
+      <h3>Sun Data</h3>
+      <div class="stats-grid">
+        <div class="stat">
+          <div class="label">Elevation</div>
+          <div class="value" id="statElevation">--</div>
+        </div>
+        <div class="stat">
+          <div class="label">Azimuth</div>
+          <div class="value" id="statAzimuth">--</div>
+        </div>
+        <div class="stat" style="grid-column:1/-1">
+          <div class="label">Shadow Length</div>
+          <div class="value" id="statShadow">--</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="info-box">
+      The CN Tower stands 553 m tall (to antenna tip). Shadow length = tower height / tan(sun elevation). Shadow direction is the opposite of the sun's azimuth.
+    </div>
+  </div>
+</div>
+
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+    "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+  }
+}
+</script>
+
+<script type="module">
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
+// ============================================================
+// SCENE SETUP
+// ============================================================
+const container = document.getElementById('canvas-container');
+const renderer = new THREE.WebGLRenderer({ antialias: true });
+renderer.setPixelRatio(window.devicePixelRatio);
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+renderer.setSize(container.clientWidth, container.clientHeight);
+container.appendChild(renderer.domElement);
+
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x0a0f1e);
+scene.fog = new THREE.Fog(0x0a0f1e, 800, 2500);
+
+const camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 1, 5000);
+camera.position.set(300, 400, 500);
+camera.lookAt(0, 0, 0);
+
+const controls = new OrbitControls(camera, renderer.domElement);
+controls.enableDamping = true;
+controls.dampingFactor = 0.08;
+controls.maxPolarAngle = Math.PI / 2.1;
+controls.minDistance = 80;
+controls.maxDistance = 2000;
+controls.target.set(0, 50, 0);
+
+// ============================================================
+// GROUND
+// ============================================================
+const groundGeo = new THREE.PlaneGeometry(3000, 3000, 60, 60);
+const groundMat = new THREE.MeshLambertMaterial({ color: 0x1a2a1a });
+const ground = new THREE.Mesh(groundGeo, groundMat);
+ground.rotation.x = -Math.PI / 2;
+ground.receiveShadow = true;
+scene.add(ground);
+
+// Grid
+const gridHelper = new THREE.GridHelper(3000, 60, 0x2a3a2a, 0x2a3a2a);
+gridHelper.position.y = 0.2;
+scene.add(gridHelper);
+
+// ============================================================
+// CN TOWER MODEL
+// ============================================================
+const towerGroup = new THREE.Group();
+const TOWER_HEIGHT = 553; // metres, mapped 1:1 units
+
+// Base/podium
+const baseGeo = new THREE.CylinderGeometry(18, 22, 30, 8);
+const baseMat = new THREE.MeshLambertMaterial({ color: 0x888888 });
+const base = new THREE.Mesh(baseGeo, baseMat);
+base.position.y = 15;
+base.castShadow = true;
+towerGroup.add(base);
+
+// Main shaft (tapers)
+const shaftGeo = new THREE.CylinderGeometry(4, 16, 380, 12);
+const shaftMat = new THREE.MeshLambertMaterial({ color: 0x999999 });
+const shaft = new THREE.Mesh(shaftGeo, shaftMat);
+shaft.position.y = 30 + 190;
+shaft.castShadow = true;
+towerGroup.add(shaft);
+
+// Upper shaft (narrower)
+const upperGeo = new THREE.CylinderGeometry(2.5, 4, 80, 8);
+const upper = new THREE.Mesh(upperGeo, shaftMat);
+upper.position.y = 30 + 380 + 40;
+upper.castShadow = true;
+towerGroup.add(upper);
+
+// Observation deck (SkyPod area)
+const deckGeo = new THREE.CylinderGeometry(16, 14, 30, 16);
+const deckMat = new THREE.MeshLambertMaterial({ color: 0xaaaaaa });
+const deck = new THREE.Mesh(deckGeo, deckMat);
+deck.position.y = 30 + 380 + 80 + 15;
+deck.castShadow = true;
+towerGroup.add(deck);
+
+// SkyPod (upper observation)
+const skypodGeo = new THREE.CylinderGeometry(10, 10, 18, 16);
+const skypod = new THREE.Mesh(skypodGeo, deckMat);
+skypod.position.y = 30 + 380 + 80 + 30 + 18 + 6;
+skypod.castShadow = true;
+towerGroup.add(skypod);
+
+// Antenna spire
+const antennaGeo = new THREE.CylinderGeometry(0.5, 1.5, 100, 6);
+const antennaMat = new THREE.MeshLambertMaterial({ color: 0xcccccc });
+const antenna = new THREE.Mesh(antennaGeo, antennaMat);
+antenna.position.y = TOWER_HEIGHT - 50;
+antenna.castShadow = true;
+towerGroup.add(antenna);
+
+scene.add(towerGroup);
+
+// ============================================================
+// SHADOW MESH (manual ground shadow polygon)
+// ============================================================
+const shadowMat = new THREE.MeshBasicMaterial({
+  color: 0x000000,
+  transparent: true,
+  opacity: 0.55,
+  depthWrite: false,
+});
+
+// Shadow as a flat elongated shape
+let shadowMesh = null;
+
+function buildShadowShape(length, angle) {
+  if (shadowMesh) {
+    scene.remove(shadowMesh);
+    shadowMesh.geometry.dispose();
+  }
+
+  const w = 20; // shadow width at base
+  const wt = 3; // shadow width at tip
+
+  // Shadow goes from base in direction of angle (azimuth of shadow)
+  const shape = new THREE.Shape();
+  shape.moveTo(-w/2, 0);
+  shape.lineTo(w/2, 0);
+  shape.lineTo(wt/2, -length);
+  shape.lineTo(-wt/2, -length);
+  shape.closePath();
+
+  const geo = new THREE.ShapeGeometry(shape);
+  shadowMesh = new THREE.Mesh(geo, shadowMat);
+  shadowMesh.rotation.x = -Math.PI / 2;
+  shadowMesh.position.y = 0.5;
+
+  // Rotate shadow to match direction
+  shadowMesh.rotation.z = angle;
+  scene.add(shadowMesh);
+}
+
+// ============================================================
+// LIGHTING
+// ============================================================
+const ambient = new THREE.AmbientLight(0x334455, 1.2);
+scene.add(ambient);
+
+const sunLight = new THREE.DirectionalLight(0xffffff, 2.5);
+sunLight.castShadow = true;
+sunLight.shadow.mapSize.width = 2048;
+sunLight.shadow.mapSize.height = 2048;
+sunLight.shadow.camera.near = 1;
+sunLight.shadow.camera.far = 3000;
+sunLight.shadow.camera.left = -800;
+sunLight.shadow.camera.right = 800;
+sunLight.shadow.camera.top = 800;
+sunLight.shadow.camera.bottom = -800;
+scene.add(sunLight);
+
+// ============================================================
+// SUN POSITION CALCULATION
+// ============================================================
+const LAT = 43.6426 * Math.PI / 180;
+const LON = -79.3871;
+
+function dayOfYear(month, day) {
+  const daysInMonth = [0,31,28,31,30,31,30,31,31,30,31,30,31];
+  let d = day;
+  for (let m = 1; m < month; m++) d += daysInMonth[m];
+  return d;
+}
+
+function solarPosition(month, day, hour) {
+  const doy = dayOfYear(month, day);
+
+  // Solar declination (degrees)
+  const decl = 23.45 * Math.sin((360 / 365) * (doy - 81) * Math.PI / 180);
+  const declR = decl * Math.PI / 180;
+
+  // Equation of time correction (minutes) — simplified
+  const B = (360 / 365) * (doy - 81) * Math.PI / 180;
+  const eot = 9.87 * Math.sin(2 * B) - 7.53 * Math.cos(B) - 1.5 * Math.sin(B);
+
+  // Solar time correction for Toronto longitude
+  const standardMeridian = -75; // EST
+  const lonCorrection = 4 * (LON - standardMeridian); // minutes
+  const solarHour = hour + (lonCorrection + eot) / 60;
+
+  // Hour angle (degrees)
+  const H = 15 * (solarHour - 12) * Math.PI / 180;
+
+  // Solar elevation
+  const sinAlt = Math.sin(LAT) * Math.sin(declR) + Math.cos(LAT) * Math.cos(declR) * Math.cos(H);
+  const elevation = Math.asin(Math.clamp ? Math.clamp(sinAlt, -1, 1) : Math.max(-1, Math.min(1, sinAlt)));
+
+  // Solar azimuth (from south, clockwise = west)
+  const cosAz = (Math.sin(declR) - Math.sin(LAT) * sinAlt) / (Math.cos(LAT) * Math.cos(elevation));
+  let azimuth = Math.acos(Math.max(-1, Math.min(1, cosAz)));
+  if (solarHour > 12) azimuth = 2 * Math.PI - azimuth; // afternoon
+
+  return { elevation, azimuth, declination: decl };
+}
+
+// ============================================================
+// UPDATE SCENE
+// ============================================================
+function update() {
+  const hour = parseFloat(document.getElementById('timeSlider').value);
+  const month = parseInt(document.getElementById('monthSelect').value);
+  const day = parseInt(document.getElementById('dayInput').value) || 21;
+
+  // Format time
+  const h = Math.floor(hour);
+  const m = Math.round((hour - h) * 60);
+  const ampm = h >= 12 ? 'PM' : 'AM';
+  const displayH = h > 12 ? h - 12 : (h === 0 ? 12 : h);
+  document.getElementById('timeDisplay').textContent =
+    `${displayH}:${m.toString().padStart(2,'0')} ${ampm}`;
+
+  const { elevation, azimuth } = solarPosition(month, day, hour);
+
+  const elevDeg = elevation * 180 / Math.PI;
+  const azDeg = ((azimuth * 180 / Math.PI) + 180) % 360; // from north
+
+  document.getElementById('statElevation').textContent =
+    elevDeg < 0 ? 'Below horizon' : `${elevDeg.toFixed(1)}°`;
+  document.getElementById('statAzimuth').textContent = `${azDeg.toFixed(1)}°`;
+
+  // Shadow length
+  const TOWER_H = 553;
+  let shadowLen;
+  if (elevDeg <= 0.5) {
+    shadowLen = null;
+    document.getElementById('statShadow').textContent = 'No shadow (night)';
+  } else {
+    shadowLen = Math.min(TOWER_H / Math.tan(elevation), 5000);
+    document.getElementById('statShadow').textContent =
+      shadowLen > 4999 ? '> 5,000 m' : `${Math.round(shadowLen).toLocaleString()} m`;
+  }
+
+  // Sun position in 3D (place sun light)
+  const sunDist = 1200;
+  // azimuth is measured from south, clockwise
+  // Three.js: x = east, z = south, y = up
+  const sunX = sunDist * Math.sin(azimuth) * Math.cos(elevation); // east component  
+  const sunY = sunDist * Math.sin(Math.max(elevation, 0.01));
+  const sunZ = sunDist * Math.cos(azimuth) * Math.cos(elevation); // south component
+
+  sunLight.position.set(sunX, sunY, sunZ);
+  sunLight.intensity = elevDeg > 0 ? Math.max(0.3, Math.sin(elevation)) * 3 : 0;
+
+  // Sky color
+  if (elevDeg > 0) {
+    const t = Math.min(elevDeg / 60, 1);
+    const skyR = Math.round(10 + t * 10);
+    const skyG = Math.round(15 + t * 25);
+    const skyB = Math.round(30 + t * 60);
+    scene.background = new THREE.Color(`rgb(${skyR},${skyG},${skyB})`);
+  } else {
+    scene.background = new THREE.Color(0x020408);
+  }
+
+  // Shadow mesh
+  if (shadowLen && elevDeg > 0) {
+    // Shadow direction = opposite of sun azimuth
+    const shadowAngle = azimuth + Math.PI;
+    buildShadowShape(shadowLen * 0.3, shadowAngle); // scale for visual
+    if (shadowMesh) shadowMesh.visible = true;
+  } else {
+    if (shadowMesh) shadowMesh.visible = false;
+  }
+}
+
+// ============================================================
+// ANIMATION
+// ============================================================
+let animating = false;
+let animHour = 5;
+
+window.toggleAnimate = function() {
+  animating = !animating;
+  const btn = document.getElementById('animBtn');
+  btn.textContent = animating ? 'Stop Animation' : 'Play Day Animation';
+  btn.classList.toggle('active', animating);
+  if (animating) animHour = 5;
+};
+
+window.update = update;
+
+// ============================================================
+// RENDER LOOP
+// ============================================================
+function animate() {
+  requestAnimationFrame(animate);
+
+  if (animating) {
+    animHour += 0.01;
+    if (animHour > 21) { animHour = 5; }
+    document.getElementById('timeSlider').value = animHour;
+    update();
+  }
+
+  controls.update();
+  renderer.render(scene, camera);
+}
+
+// Resize
+window.addEventListener('resize', () => {
+  camera.aspect = container.clientWidth / container.clientHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(container.clientWidth, container.clientHeight);
+});
+
+// Init
+update();
+animate();
+</script>
+
+</body>
+</html>
